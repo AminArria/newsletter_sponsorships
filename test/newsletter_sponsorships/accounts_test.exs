@@ -203,6 +203,11 @@ defmodule NewsletterSponsorships.AccountsTest do
     end
 
     test "updates the email with a valid token", %{user: user, token: token, email: email} do
+      # TODO: Remove this
+      # Why is it here? Because computer are too fast and creating a confirmed user and
+      # confirming a new email occur on the same second which causes one of the assertions to fail
+      Process.sleep(1000)
+
       assert Accounts.update_user_email(user, token) == :ok
       changed_user = Repo.get!(User, user.id)
       assert changed_user.email != user.email
@@ -360,7 +365,7 @@ defmodule NewsletterSponsorships.AccountsTest do
 
   describe "deliver_user_confirmation_instructions/2" do
     setup do
-      %{user: user_fixture()}
+      %{user: unconfirmed_user_fixture()}
     end
 
     test "sends token through notification", %{user: user} do
@@ -379,7 +384,7 @@ defmodule NewsletterSponsorships.AccountsTest do
 
   describe "confirm_user/2" do
     setup do
-      user = user_fixture()
+      user = unconfirmed_user_fixture()
 
       token =
         extract_user_token(fn url ->

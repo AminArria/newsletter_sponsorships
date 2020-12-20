@@ -3,7 +3,6 @@ defmodule NewsletterSponsorshipsWeb.UserRegistrationController do
 
   alias NewsletterSponsorships.Accounts
   alias NewsletterSponsorships.Accounts.User
-  alias NewsletterSponsorshipsWeb.UserAuth
 
   def new(conn, _params) do
     changeset = Accounts.change_user_registration(%User{})
@@ -20,8 +19,8 @@ defmodule NewsletterSponsorshipsWeb.UserRegistrationController do
           )
 
         conn
-        |> put_flash(:info, "User created successfully.")
-        |> UserAuth.log_in_user(user)
+        |> put_flash(:info, "User created successfully. Please confirm your email to log in.")
+        |> redirect(to: Routes.user_session_path(conn, :new))
 
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "new.html", changeset: changeset)

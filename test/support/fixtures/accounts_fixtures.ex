@@ -16,6 +16,19 @@ defmodule NewsletterSponsorships.AccountsFixtures do
       })
       |> NewsletterSponsorships.Accounts.register_user()
 
+    NewsletterSponsorships.Accounts.User.confirm_changeset(user)
+    |> NewsletterSponsorships.Repo.update!
+  end
+
+  def unconfirmed_user_fixture(attrs \\ %{}) do
+    {:ok, user} =
+      attrs
+      |> Enum.into(%{
+        email: unique_user_email(),
+        password: valid_user_password()
+      })
+      |> NewsletterSponsorships.Accounts.register_user()
+
     user
   end
 

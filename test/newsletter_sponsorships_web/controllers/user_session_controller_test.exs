@@ -78,6 +78,17 @@ defmodule NewsletterSponsorshipsWeb.UserSessionControllerTest do
       assert response =~ "<h1>Log in</h1>"
       assert response =~ "Invalid email or password"
     end
+
+    test "redirects to confirmation re-send if email is not confirmed", %{conn: conn} do
+      unconfirmed_user = unconfirmed_user_fixture()
+      conn =
+        post(conn, Routes.user_session_path(conn, :create), %{
+          "user" => %{"email" => unconfirmed_user.email, "password" => valid_user_password()}
+        })
+
+      assert redirected_to(conn) == Routes.user_confirmation_path(conn, :new)
+      assert get_flash(conn, :error) == "You must confirm your email to log in"
+    end
   end
 
   describe "DELETE /users/log_out" do

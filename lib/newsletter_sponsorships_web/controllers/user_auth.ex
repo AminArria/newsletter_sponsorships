@@ -128,8 +128,8 @@ defmodule NewsletterSponsorshipsWeb.UserAuth do
   they use the application at all, here would be a good place.
   """
   def require_authenticated_user(conn, _opts) do
-    if conn.assigns[:current_user] do
-      conn
+    if user = conn.assigns[:current_user] do
+      require_confirmed_email(conn, user)
     else
       conn
       |> put_flash(:error, "You must log in to access this page.")
@@ -137,6 +137,17 @@ defmodule NewsletterSponsorshipsWeb.UserAuth do
       |> redirect(to: Routes.user_session_path(conn, :new))
       |> halt()
     end
+  end
+
+  defp require_confirmed_email(conn, %{confirmed_at: nil}) do
+    conn
+    |> put_flash(:error, "You must confirm your email to log in")
+    |> redirect(to: Routes.user_confirmation_path(conn, :new))
+    |> halt()
+  end
+
+  defp require_confirmed_email(conn, _user_with_confirmed_email) do
+    conn
   end
 
   defp maybe_store_return_to(%{method: "GET"} = conn) do
