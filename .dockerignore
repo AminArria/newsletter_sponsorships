@@ -1,0 +1,5 @@
+.git
+_build/
+deps/
+docker-data/
+assets/node_modules/
