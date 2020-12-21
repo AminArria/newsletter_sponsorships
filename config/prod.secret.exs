@@ -30,6 +30,18 @@ config :newsletter_sponsorships, NewsletterSponsorshipsWeb.Endpoint,
   ],
   secret_key_base: secret_key_base
 
+
+postmark_api_key =
+  System.get_env("POSTMARK_API_KEY") ||
+    raise """
+    Postmark API key is missing.
+    """
+
+# Bamboo Postmark adapter config
+config :newsletter_sponsorships, NewsletterSponsorshipsWeb.Mailer,
+  adapter: Bamboo.PostmarkAdapter,
+  api_key: postmark_api_key
+
 # ## Using releases (Elixir v1.9+)
 #
 # If you are doing OTP releases, you need to instruct Phoenix

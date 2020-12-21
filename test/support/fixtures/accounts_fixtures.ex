@@ -33,8 +33,9 @@ defmodule NewsletterSponsorships.AccountsFixtures do
   end
 
   def extract_user_token(fun) do
-    {:ok, captured} = fun.(&"[TOKEN]#{&1}[TOKEN]")
-    [_, token, _] = String.split(captured.body, "[TOKEN]")
+    # {:ok, captured} = fun.(&"[TOKEN]#{&1}[TOKEN]")
+    %Bamboo.Email{text_body: text_body} = fun.(&"[TOKEN]#{&1}[TOKEN]")
+    [_, token, _] = String.split(text_body, "[TOKEN]")
     token
   end
 end
