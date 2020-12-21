@@ -2,7 +2,7 @@
 # from environment variables. You can also hardcode secrets,
 # although such is generally not recommended and you have to
 # remember to add this file to your .gitignore.
-use Mix.Config
+import Config
 
 database_url =
   System.get_env("DATABASE_URL") ||
@@ -42,12 +42,4 @@ config :newsletter_sponsorships, NewsletterSponsorshipsWeb.Mailer,
   adapter: Bamboo.PostmarkAdapter,
   api_key: postmark_api_key
 
-# ## Using releases (Elixir v1.9+)
-#
-# If you are doing OTP releases, you need to instruct Phoenix
-# to start each relevant endpoint:
-#
-#     config :newsletter_sponsorships, NewsletterSponsorshipsWeb.Endpoint, server: true
-#
-# Then you can assemble a release by calling `mix release`.
-# See `mix help release` for more information.
+config :newsletter_sponsorships, NewsletterSponsorshipsWeb.Endpoint, server: true
