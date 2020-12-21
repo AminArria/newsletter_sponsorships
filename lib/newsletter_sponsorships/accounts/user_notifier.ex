@@ -2,6 +2,8 @@ defmodule NewsletterSponsorships.Accounts.UserNotifier do
   import Bamboo.Email
   alias NewsletterSponsorshipsWeb.Mailer
 
+  @from_instructions "instructions@sponsorly.aminarria.tech"
+
   @doc """
   Deliver instructions to confirm account.
   """
@@ -23,7 +25,7 @@ defmodule NewsletterSponsorships.Accounts.UserNotifier do
 
     new_email(
       to: user.email,
-      from: "no-reply@newsletter-sponsorships.com",
+      from: @from_instructions,
       subject: "Email Confirmation",
       text_body: email_text
     )
@@ -51,7 +53,7 @@ defmodule NewsletterSponsorships.Accounts.UserNotifier do
 
     new_email(
       to: user.email,
-      from: "no-reply@newsletter-sponsorships.com",
+      from: @from_instructions,
       subject: "Password Reset",
       text_body: email_text
     )
@@ -79,7 +81,7 @@ defmodule NewsletterSponsorships.Accounts.UserNotifier do
 
     new_email(
       to: user.email,
-      from: "no-reply@newsletter-sponsorships.com",
+      from: @from_instructions,
       subject: "Update Email",
       text_body: email_text
     )
