@@ -1,0 +1,32 @@
+<h1>Listing Newsletters</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Interval days</th>
+      <th>Sponsor before days</th>
+      <th>Sponsor in days</th>
+
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+<%= for newsletter <- @newsletters do %>
+    <tr>
+      <td><%= newsletter.name %></td>
+      <td><%= newsletter.interval_days %></td>
+      <td><%= newsletter.sponsor_before_days %></td>
+      <td><%= newsletter.sponsor_in_days %></td>
+
+      <td>
+        <span><%= link "Show", to: Routes.newsletter_path(@conn, :show, newsletter) %></span>
+        <span><%= link "Edit", to: Routes.newsletter_path(@conn, :edit, newsletter) %></span>
+        <span><%= link "Delete", to: Routes.newsletter_path(@conn, :delete, newsletter), method: :delete, data: [confirm: "Are you sure?"] %></span>
+      </td>
+    </tr>
+<% end %>
+  </tbody>
+</table>
+
+<span><%= link "New Newsletter", to: Routes.newsletter_path(@conn, :new) %></span>

@@ -1,0 +1,28 @@
+<h1>Show Newsletter</h1>
+
+<ul>
+
+  <li>
+    <strong>Name:</strong>
+    <%= @newsletter.name %>
+  </li>
+
+  <li>
+    <strong>Interval days:</strong>
+    <%= @newsletter.interval_days %>
+  </li>
+
+  <li>
+    <strong>Sponsor before days:</strong>
+    <%= @newsletter.sponsor_before_days %>
+  </li>
+
+  <li>
+    <strong>Sponsor in days:</strong>
+    <%= @newsletter.sponsor_in_days %>
+  </li>
+
+</ul>
+
+<span><%= link "Edit", to: Routes.newsletter_path(@conn, :edit, @newsletter) %></span>
+<span><%= link "Back", to: Routes.newsletter_path(@conn, :index) %></span>

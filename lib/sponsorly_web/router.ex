@@ -22,6 +22,12 @@ defmodule SponsorlyWeb.Router do
     get "/", PageController, :index
   end
 
+  scope "/", SponsorlyWeb do
+    pipe_through [:browser, :require_authenticated_user]
+
+    resources "/newsletters", NewsletterController
+  end
+
   # Other scopes may use custom stacks.
   # scope "/api", SponsorlyWeb do
   #   pipe_through :api

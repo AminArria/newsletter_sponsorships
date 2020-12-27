@@ -24,6 +24,7 @@ defmodule Sponsorly.DataCase do
       import Ecto.Changeset
       import Ecto.Query
       import Sponsorly.DataCase
+      import Sponsorly.Factory
     end
   end
 
@@ -50,6 +51,29 @@ defmodule Sponsorly.DataCase do
       Regex.replace(~r"%{(\w+)}", message, fn _, key ->
         opts |> Keyword.get(String.to_existing_atom(key), key) |> to_string()
       end)
+    end)
+  end
+
+  @doc """
+  Helper to unload assocs that are not preloaded when fetching them, but ex_machine
+  has theme on `insert/1` so it feels they are "preloaded"
+  """
+
+  def unload_assocs(data, assocs) do
+    Enum.reduce(assocs, data, fn field, acc ->
+      cardinality =
+        case Map.get(data, field) do
+          value when is_list(value) -> :many
+          _value -> :one
+        end
+
+      unloaded_field = %Ecto.Association.NotLoaded{
+        __field__: field,
+        __owner__: data.__struct__,
+        __cardinality__: cardinality
+      }
+
+      Map.put(acc, field, unloaded_field)
     end)
   end
 end
