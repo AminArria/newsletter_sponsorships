@@ -48,7 +48,8 @@ defmodule Sponsorly.MixProject do
       {:plug_cowboy, "~> 2.0"},
       {:phx_gen_auth, "~> 0.6", only: [:dev], runtime: false},
       {:bamboo, "~> 1.6"},
-      {:bamboo_postmark, "~> 0.7"}
+      {:bamboo_postmark, "~> 0.7"},
+      {:ex_machina, "~> 2.5.0", only: :test}
     ]
   end
 

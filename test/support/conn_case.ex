@@ -22,6 +22,7 @@ defmodule SponsorlyWeb.ConnCase do
       # Import conveniences for testing with connections
       import Plug.Conn
       import Phoenix.ConnTest
+      import Sponsorly.Factory
       import SponsorlyWeb.ConnCase
 
       alias SponsorlyWeb.Router.Helpers, as: Routes
