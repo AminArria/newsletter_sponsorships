@@ -1,7 +1,7 @@
-defmodule NewsletterSponsorships.AccountsFixtures do
+defmodule Sponsorly.AccountsFixtures do
   @moduledoc """
   This module defines test helpers for creating
-  entities via the `NewsletterSponsorships.Accounts` context.
+  entities via the `Sponsorly.Accounts` context.
   """
 
   def unique_user_email, do: "user#{System.unique_integer()}@example.com"
@@ -14,10 +14,10 @@ defmodule NewsletterSponsorships.AccountsFixtures do
         email: unique_user_email(),
         password: valid_user_password()
       })
-      |> NewsletterSponsorships.Accounts.register_user()
+      |> Sponsorly.Accounts.register_user()
 
-    NewsletterSponsorships.Accounts.User.confirm_changeset(user)
-    |> NewsletterSponsorships.Repo.update!
+    Sponsorly.Accounts.User.confirm_changeset(user)
+    |> Sponsorly.Repo.update!
   end
 
   def unconfirmed_user_fixture(attrs \\ %{}) do
@@ -27,7 +27,7 @@ defmodule NewsletterSponsorships.AccountsFixtures do
         email: unique_user_email(),
         password: valid_user_password()
       })
-      |> NewsletterSponsorships.Accounts.register_user()
+      |> Sponsorly.Accounts.register_user()
 
     user
   end

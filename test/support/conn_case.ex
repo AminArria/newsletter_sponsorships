@@ -1,4 +1,4 @@
-defmodule NewsletterSponsorshipsWeb.ConnCase do
+defmodule SponsorlyWeb.ConnCase do
   @moduledoc """
   This module defines the test case to be used by
   tests that require setting up a connection.
@@ -11,7 +11,7 @@ defmodule NewsletterSponsorshipsWeb.ConnCase do
   we enable the SQL sandbox, so changes done to the database
   are reverted at the end of every test. If you are using
   PostgreSQL, you can even run database tests asynchronously
-  by setting `use NewsletterSponsorshipsWeb.ConnCase, async: true`, although
+  by setting `use SponsorlyWeb.ConnCase, async: true`, although
   this option is not recommended for other databases.
   """
 
@@ -22,20 +22,20 @@ defmodule NewsletterSponsorshipsWeb.ConnCase do
       # Import conveniences for testing with connections
       import Plug.Conn
       import Phoenix.ConnTest
-      import NewsletterSponsorshipsWeb.ConnCase
+      import SponsorlyWeb.ConnCase
 
-      alias NewsletterSponsorshipsWeb.Router.Helpers, as: Routes
+      alias SponsorlyWeb.Router.Helpers, as: Routes
 
       # The default endpoint for testing
-      @endpoint NewsletterSponsorshipsWeb.Endpoint
+      @endpoint SponsorlyWeb.Endpoint
     end
   end
 
   setup tags do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(NewsletterSponsorships.Repo)
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Sponsorly.Repo)
 
     unless tags[:async] do
-      Ecto.Adapters.SQL.Sandbox.mode(NewsletterSponsorships.Repo, {:shared, self()})
+      Ecto.Adapters.SQL.Sandbox.mode(Sponsorly.Repo, {:shared, self()})
     end
 
     {:ok, conn: Phoenix.ConnTest.build_conn()}
@@ -50,7 +50,7 @@ defmodule NewsletterSponsorshipsWeb.ConnCase do
   test context.
   """
   def register_and_log_in_user(%{conn: conn}) do
-    user = NewsletterSponsorships.AccountsFixtures.user_fixture()
+    user = Sponsorly.AccountsFixtures.user_fixture()
     %{conn: log_in_user(conn, user), user: user}
   end
 
@@ -60,7 +60,7 @@ defmodule NewsletterSponsorshipsWeb.ConnCase do
   It returns an updated `conn`.
   """
   def log_in_user(conn, user) do
-    token = NewsletterSponsorships.Accounts.generate_user_session_token(user)
+    token = Sponsorly.Accounts.generate_user_session_token(user)
 
     conn
     |> Phoenix.ConnTest.init_test_session(%{})

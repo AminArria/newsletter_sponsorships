@@ -11,7 +11,7 @@ database_url =
     For example: ecto://USER:PASS@HOST/DATABASE
     """
 
-config :newsletter_sponsorships, NewsletterSponsorships.Repo,
+config :sponsorly, Sponsorly.Repo,
   ssl: true,
   url: database_url,
   pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10")
@@ -23,7 +23,7 @@ secret_key_base =
     You can generate one by calling: mix phx.gen.secret
     """
 
-config :newsletter_sponsorships, NewsletterSponsorshipsWeb.Endpoint,
+config :sponsorly, SponsorlyWeb.Endpoint,
   http: [
     port: String.to_integer(System.get_env("PORT") || "4000"),
     transport_options: [socket_opts: [:inet6]]
@@ -47,8 +47,8 @@ postmark_api_key =
   end
 
 # Bamboo Postmark adapter config
-config :newsletter_sponsorships, NewsletterSponsorshipsWeb.Mailer,
+config :sponsorly, SponsorlyWeb.Mailer,
   adapter: bamboo_adapter,
   api_key: postmark_api_key
 
-config :newsletter_sponsorships, NewsletterSponsorshipsWeb.Endpoint, server: true
+config :sponsorly, SponsorlyWeb.Endpoint, server: true

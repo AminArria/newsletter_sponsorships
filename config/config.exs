@@ -7,15 +7,15 @@
 # General application configuration
 use Mix.Config
 
-config :newsletter_sponsorships,
-  ecto_repos: [NewsletterSponsorships.Repo]
+config :sponsorly,
+  ecto_repos: [Sponsorly.Repo]
 
 # Configures the endpoint
-config :newsletter_sponsorships, NewsletterSponsorshipsWeb.Endpoint,
+config :sponsorly, SponsorlyWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "jWf+zrcckDMoV7ZnGpabUocPDZeeMfah4CpQGdgF/3huWqJHcNBOigHzvaQaedIQ",
-  render_errors: [view: NewsletterSponsorshipsWeb.ErrorView, accepts: ~w(html json), layout: false],
-  pubsub_server: NewsletterSponsorships.PubSub,
+  render_errors: [view: SponsorlyWeb.ErrorView, accepts: ~w(html json), layout: false],
+  pubsub_server: Sponsorly.PubSub,
   live_view: [signing_salt: "9rIMPUq8"]
 
 # Configures Elixir's Logger
@@ -27,7 +27,7 @@ config :logger, :console,
 config :phoenix, :json_library, Jason
 
 # Bamboo configuration
-config :newsletter_sponsorships, NewsletterSponsorshipsWeb.Mailer,
+config :sponsorly, SponsorlyWeb.Mailer,
   adapter: Bamboo.LocalAdapter
 
 # Import environment specific config. This must remain at the bottom

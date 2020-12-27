@@ -44,8 +44,8 @@ RUN chown nobody:nobody /app
 
 USER nobody:nobody
 
-COPY --from=build --chown=nobody:nobody /app/_build/prod/rel/newsletter_sponsorships ./
+COPY --from=build --chown=nobody:nobody /app/_build/prod/rel/sponsorly ./
 
 ENV HOME=/app
 
-CMD ["bin/newsletter_sponsorships", "start"]
+CMD ["bin/sponsorly", "start"]

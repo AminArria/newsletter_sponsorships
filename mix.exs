@@ -1,9 +1,9 @@
-defmodule NewsletterSponsorships.MixProject do
+defmodule Sponsorly.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :newsletter_sponsorships,
+      app: :sponsorly,
       version: "0.1.0",
       elixir: "~> 1.7",
       elixirc_paths: elixirc_paths(Mix.env()),
@@ -19,7 +19,7 @@ defmodule NewsletterSponsorships.MixProject do
   # Type `mix help compile.app` for more information.
   def application do
     [
-      mod: {NewsletterSponsorships.Application, []},
+      mod: {Sponsorly.Application, []},
       extra_applications: [:logger, :runtime_tools]
     ]
   end

@@ -2,14 +2,14 @@ version: '3.2'
 
 services:
   postgres:
-    container_name: newsletter_sponsorships_db
+    container_name: sponsorly_db
     image: postgres:12.3
     ports:
       - 5432:5432
     environment:
-      - POSTGRES_USER=newsletter_sponsorships_user
-      - POSTGRES_PASSWORD=newsletter_sponsorshipsdevelop
-      - POSTGRES_DB=newsletter_sponsorships_dev
+      - POSTGRES_USER=sponsorly_user
+      - POSTGRES_PASSWORD=sponsorlydevelop
+      - POSTGRES_DB=sponsorly_dev
       - PGDATA=/postgres/data
     volumes:
       - ./docker-data/postgres:/postgres
