@@ -1,10 +1,8 @@
 spec:
   name: sponsorly-example
   databases:
-  - db_name: sponsorly_prod
-    db_user: sponsorly_user
+  - name: sponsorly-example-db
     engine: PG
-    name: sponsorly-example-db
     production: false
     version: "12"
   services:
