@@ -31,15 +31,24 @@ config :newsletter_sponsorships, NewsletterSponsorshipsWeb.Endpoint,
   secret_key_base: secret_key_base
 
 
+bamboo_adapter =
+  if System.get_env("USE_LOCAL_ADAPTER") == "true" do
+    Bamboo.LocalAdapter
+  else
+    Bamboo.PostmarkAdapter
+  end
+
 postmark_api_key =
-  System.get_env("POSTMARK_API_KEY") ||
-    raise """
-    Postmark API key is missing.
-    """
+  if bamboo_adapter == Bamboo.PostmarkAdapter do
+    System.get_env("POSTMARK_API_KEY") ||
+      raise """
+      Postmark API key is missing.
+      """
+  end
 
 # Bamboo Postmark adapter config
 config :newsletter_sponsorships, NewsletterSponsorshipsWeb.Mailer,
-  adapter: Bamboo.PostmarkAdapter,
+  adapter: bamboo_adapter,
   api_key: postmark_api_key
 
 config :newsletter_sponsorships, NewsletterSponsorshipsWeb.Endpoint, server: true
