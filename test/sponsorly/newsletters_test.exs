@@ -71,6 +71,29 @@ defmodule Sponsorly.NewslettersTest do
       newsletter = build(:newsletter)
       assert %Ecto.Changeset{} = Newsletters.change_newsletter(newsletter)
     end
+
+    test "create_newsletter/1 creates associated issues based on :next_issue_at, :interval_days, and :sponsor_in_days" do
+      next_issue_at = DateTime.utc_now() |> DateTime.add(24 * 60 * 60)
+      attrs = params_with_assocs(:newsletter, next_issue_at: next_issue_at)
+      max_sponsor_at = DateTime.add(next_issue_at, attrs.sponsor_in_days * 24 * 60 * 60)
+      {:ok, newsletter} = Newsletters.create_newsletter(attrs)
+
+      [next_issue | issues] = Newsletters.list_issues(newsletter.id)
+
+      assert check_datetime(next_issue.due_at, next_issue_at)
+
+      Enum.reduce(issues, {1, next_issue_at}, fn issue, {issues_seen, last_issue_at} ->
+        next_at =
+          last_issue_at
+          |> DateTime.add(attrs.interval_days * 24 * 60 * 60)
+          |> DateTime.truncate(:second)
+
+        assert issue.due_at == next_at
+        assert DateTime.compare(max_sponsor_at, issue.due_at) == :gt
+
+        {issues_seen + 1, next_at}
+      end)
+    end
   end
 
   describe "issues" do

@@ -9,7 +9,10 @@ defmodule Sponsorly.Newsletters.Newsletter do
     field :sponsor_in_days, :integer
     field :deleted, :boolean, default: false
 
+    field :next_issue_at, :utc_datetime, virtual: true
+
     belongs_to :user, Sponsorly.Accounts.User
+    has_many :issues, Sponsorly.Newsletters.Issue
 
     timestamps()
   end
@@ -17,9 +20,32 @@ defmodule Sponsorly.Newsletters.Newsletter do
   @doc false
   def create_changeset(newsletter, attrs) do
     newsletter
-    |> cast(attrs, [:name, :interval_days, :sponsor_before_days, :sponsor_in_days, :user_id])
-    |> validate_required([:name, :interval_days, :sponsor_before_days, :sponsor_in_days, :user_id])
+    |> cast(attrs, [:name, :interval_days, :next_issue_at, :sponsor_before_days, :sponsor_in_days, :user_id])
+    |> validate_required([:name, :interval_days, :next_issue_at, :sponsor_before_days, :sponsor_in_days, :user_id])
     |> common_validations()
+    |> prepare_changes(&generate_issues/1)
+  end
+
+  defp generate_issues(changeset) do
+    next_issue_at = get_change(changeset, :next_issue_at)
+    interval_days = get_change(changeset, :interval_days)
+    sponsor_in_days = get_change(changeset, :sponsor_in_days)
+    max_sponsor_at = DateTime.add(next_issue_at, sponsor_in_days * 24 * 60 * 60)
+
+    issues_attrs = generate_issues(next_issue_at, max_sponsor_at, interval_days, [])
+    put_change(changeset, :issues, issues_attrs)
+  end
+
+  def generate_issues(current_issue_at, max_sponsor_at, interval_days, issues_attrs) do
+    case DateTime.compare(max_sponsor_at, current_issue_at) do
+      :gt ->
+        issue_attrs = %{due_at: current_issue_at}
+        next_issue_at = DateTime.add(current_issue_at, interval_days * 24 * 60 * 60)
+        generate_issues(next_issue_at, max_sponsor_at, interval_days, issues_attrs ++ [issue_attrs])
+
+      _ ->
+        issues_attrs
+    end
   end
 
   def update_changeset(newsletter, attrs) do

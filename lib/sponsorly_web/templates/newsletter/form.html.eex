@@ -9,6 +9,10 @@
   <%= text_input f, :name %>
   <%= error_tag f, :name %>
 
+  <%= label f, :next_issue_at %>
+  <%= datetime_select f, :next_issue_at %>
+  <%= error_tag f, :next_issue_at %>
+
   <%= label f, :interval_days %>
   <%= number_input f, :interval_days %>
   <%= error_tag f, :interval_days %>
