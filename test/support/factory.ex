@@ -18,4 +18,12 @@ defmodule Sponsorly.Factory do
       user: build(:confirmed_user)
     }
   end
+
+  def issue_factory do
+    %Sponsorly.Newsletters.Issue{
+      name: sequence("name"),
+      due_at: DateTime.add(DateTime.utc_now(), :rand.uniform(100) * 24 * 60 * 60),
+      newsletter: build(:newsletter)
+    }
+  end
 end

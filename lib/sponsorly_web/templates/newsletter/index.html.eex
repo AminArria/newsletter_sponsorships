@@ -9,6 +9,7 @@
       <th>Sponsor in days</th>
 
       <th></th>
+      <th></th>
     </tr>
   </thead>
   <tbody>
@@ -18,6 +19,10 @@
       <td><%= newsletter.interval_days %></td>
       <td><%= newsletter.sponsor_before_days %></td>
       <td><%= newsletter.sponsor_in_days %></td>
+
+      <td>
+        <span><%= link "Issues", to: Routes.newsletter_issue_path(@conn, :index, newsletter) %></span>
+      </td>
 
       <td>
         <span><%= link "Show", to: Routes.newsletter_path(@conn, :show, newsletter) %></span>

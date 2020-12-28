@@ -122,4 +122,121 @@ defmodule Sponsorly.Newsletters do
   def change_newsletter(%Newsletter{} = newsletter, attrs) do
     Newsletter.update_changeset(newsletter, attrs)
   end
+
+  alias Sponsorly.Newsletters.Issue
+
+  @doc """
+  Returns the list of issues of a newsletter.
+
+  ## Examples
+
+      iex> list_issues(newsletter_id)
+      [%Issue{}, ...]
+
+  """
+  def list_issues(newsletter_id) do
+    q =
+      from i in Issue,
+      where: i.newsletter_id == ^newsletter_id and
+             not i.deleted
+
+    Repo.all(q)
+  end
+
+  @doc """
+  Gets a single issue of a newsletter.
+
+  Raises `Ecto.NoResultsError` if the Issue does not exist.
+
+  ## Examples
+
+      iex> get_issue!(123)
+      %Issue{}
+
+      iex> get_issue!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_issue!(newsletter_id, id) do
+    q =
+      from i in Issue,
+      where: i.id == ^id and
+             i.newsletter_id == ^newsletter_id and
+             not i.deleted
+
+    Repo.one!(q)
+  end
+
+  @doc """
+  Creates an issue.
+
+  ## Examples
+
+      iex> create_issue(%{field: value})
+      {:ok, %Issue{}}
+
+      iex> create_issue(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_issue(attrs \\ %{}) do
+    %Issue{}
+    |> Issue.create_changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates an issue.
+
+  ## Examples
+
+      iex> update_issue(issue, %{field: new_value})
+      {:ok, %Issue{}}
+
+      iex> update_issue(issue, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_issue(%Issue{} = issue, attrs) do
+    issue
+    |> Issue.update_changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Soft deletes a issue.
+
+  ## Examples
+
+      iex> soft_delete_issue(issue)
+      {:ok, %Issue{}}
+
+      iex> soft_delete_issue(issue)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def soft_delete_issue(%Issue{} = issue) do
+    issue
+    |> Issue.soft_delete_changeset()
+    |> Repo.update()
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking issue changes.
+
+  ## Examples
+
+      iex> change_issue(issue)
+      %Ecto.Changeset{data: %Issue{}}
+
+  """
+  def change_issue(issue, attrs \\ %{})
+
+  def change_issue(%Issue{id: nil} = issue, attrs) do
+    Issue.create_changeset(issue, attrs)
+  end
+
+  def change_issue(%Issue{} = issue, attrs) do
+    Issue.update_changeset(issue, attrs)
+  end
 end

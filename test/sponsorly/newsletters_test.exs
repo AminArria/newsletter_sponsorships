@@ -72,4 +72,67 @@ defmodule Sponsorly.NewslettersTest do
       assert %Ecto.Changeset{} = Newsletters.change_newsletter(newsletter)
     end
   end
+
+  describe "issues" do
+    alias Sponsorly.Newsletters.Issue
+
+    @invalid_attrs %{due_at: nil}
+
+    test "list_issues/2 returns all issues for a newsletter" do
+      issue = insert(:issue) |> unload_assocs([:newsletter])
+      insert(:issue)
+
+      assert Newsletters.list_issues(issue.newsletter_id) == [issue]
+    end
+
+    test "get_issue!/2 returns the issue of a newsletter with given id" do
+      issue = insert(:issue) |> unload_assocs([:newsletter])
+      other_newsletter = insert(:newsletter)
+
+      assert Newsletters.get_issue!(issue.newsletter_id, issue.id) == issue
+      assert_raise Ecto.NoResultsError, fn ->
+        Newsletters.get_newsletter!(issue.newsletter_id, other_newsletter.id)
+      end
+    end
+
+    test "create_issue/1 with valid data creates a issue" do
+      attrs = params_with_assocs(:issue)
+      assert {:ok, %Issue{} = issue} = Newsletters.create_issue(attrs)
+      assert check_datetime(issue.due_at, attrs.due_at)
+      assert issue.name == attrs.name
+      assert issue.newsletter_id == attrs.newsletter_id
+    end
+
+    test "create_issue/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Newsletters.create_issue(@invalid_attrs)
+    end
+
+    test "update_issue/2 with valid data updates the issue" do
+      original_issue = insert(:issue)
+      attrs = params_with_assocs(:issue)
+      assert {:ok, %Issue{} = issue} = Newsletters.update_issue(original_issue, attrs)
+      assert check_datetime(issue.due_at, attrs.due_at)
+      assert issue.name == attrs.name
+      # Can't change newsletter
+      assert issue.newsletter_id == original_issue.newsletter_id
+    end
+
+    test "update_issue/2 with invalid data returns error changeset" do
+      issue = insert(:issue) |> unload_assocs([:newsletter])
+      assert {:error, %Ecto.Changeset{}} = Newsletters.update_issue(issue, @invalid_attrs)
+      assert issue == Newsletters.get_issue!(issue.newsletter_id, issue.id)
+    end
+
+    test "soft_delete_issue/1 soft deletes the issue" do
+      issue = insert(:issue)
+      assert {:ok, %Issue{deleted: true}} = Newsletters.soft_delete_issue(issue)
+      assert_raise Ecto.NoResultsError, fn -> Newsletters.get_issue!(issue.newsletter_id, issue.id) end
+      refute Newsletters.list_issues(issue.newsletter_id) == [issue]
+    end
+
+    test "change_issue/1 returns a issue changeset" do
+      issue = insert(:issue)
+      assert %Ecto.Changeset{} = Newsletters.change_issue(issue)
+    end
+  end
 end

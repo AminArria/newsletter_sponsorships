@@ -76,4 +76,29 @@ defmodule Sponsorly.DataCase do
       Map.put(acc, field, unloaded_field)
     end)
   end
+
+  @doc """
+  Helper to check timestamps and give a margin of error (1 second by default) due to latency.
+
+  Instead of doing
+
+  ```
+    assert time1 == time2
+  ```
+
+  Replace with
+
+  ```
+    assert check_timestamp(time1, time2)
+  ```
+  """
+
+  def check_datetime(expected, actual, margin \\ 1) do
+    DateTime.add(expected, margin, :second)
+    |> DateTime.compare(actual)
+    |> case do
+      :gt -> true
+      _ -> expected == actual
+    end
+  end
 end

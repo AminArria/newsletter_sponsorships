@@ -1,0 +1,17 @@
+<h1>Show Issue</h1>
+
+<ul>
+  <li>
+    <strong>Name:</strong>
+    <%= @issue.name %>
+  </li>
+
+  <li>
+    <strong>Due at:</strong>
+    <%= @issue.due_at %>
+  </li>
+
+</ul>
+
+<span><%= link "Edit", to: Routes.newsletter_issue_path(@conn, :edit, @newsletter, @issue) %></span>
+<span><%= link "Back", to: Routes.newsletter_issue_path(@conn, :index, @newsletter) %></span>
