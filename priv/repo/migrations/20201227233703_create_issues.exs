@@ -3,7 +3,7 @@ defmodule Sponsorly.Repo.Migrations.CreateIssues do
 
   def change do
     create table(:issues) do
-      add :deleted, :boolean, default: true, null: false
+      add :deleted, :boolean, default: false, null: false
       add :due_at, :utc_datetime, null: false
       add :name, :string
       add :newsletter_id, references(:newsletters, on_delete: :nothing), null: false

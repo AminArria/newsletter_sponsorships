@@ -23,7 +23,18 @@ defmodule Sponsorly.Newsletters.Newsletter do
     |> cast(attrs, [:name, :interval_days, :next_issue_at, :sponsor_before_days, :sponsor_in_days, :user_id])
     |> validate_required([:name, :interval_days, :next_issue_at, :sponsor_before_days, :sponsor_in_days, :user_id])
     |> common_validations()
+    |> validate_next_issue()
     |> prepare_changes(&generate_issues/1)
+  end
+
+  defp validate_next_issue(changeset) do
+    with next_issue_at when not is_nil(next_issue_at) <- get_change(changeset, :next_issue_at),
+         :gt <- DateTime.compare(next_issue_at, DateTime.utc_now()) do
+      changeset
+    else
+      _ ->
+        add_error(changeset, :next_issue_at, "must be after today")
+    end
   end
 
   defp generate_issues(changeset) do
