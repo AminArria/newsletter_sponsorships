@@ -27,7 +27,8 @@ defmodule SponsorlyWeb.NewsletterControllerTest do
 
   describe "create newsletter" do
     test "redirects to show when data is valid", %{conn: conn} do
-      attrs = params_for(:newsletter)
+      next_issue_at = DateTime.utc_now() |> DateTime.add(24 * 60 * 60)
+      attrs = params_for(:newsletter, next_issue_at: next_issue_at)
       conn = post(conn, Routes.newsletter_path(conn, :create), newsletter: attrs)
 
       assert %{id: id} = redirected_params(conn)

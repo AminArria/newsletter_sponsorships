@@ -28,7 +28,8 @@ defmodule Sponsorly.NewslettersTest do
     end
 
     test "create_newsletter/1 with valid data creates a newsletter" do
-      attrs = params_with_assocs(:newsletter)
+      next_issue_at = DateTime.utc_now() |> DateTime.add(24 * 60 * 60)
+      attrs = params_with_assocs(:newsletter, next_issue_at: next_issue_at)
       assert {:ok, %Newsletter{} = newsletter} = Newsletters.create_newsletter(attrs)
       assert newsletter.interval_days == newsletter.interval_days
       assert newsletter.name == newsletter.name
