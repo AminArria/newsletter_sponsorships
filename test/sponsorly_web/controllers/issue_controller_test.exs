@@ -25,7 +25,7 @@ defmodule SponsorlyWeb.IssueControllerTest do
   describe "show" do
     setup :create_issue
 
-    test "lists all sponsorships of an issue", %{conn: conn, issue: issue} do
+    test "lists all sponsorships of an issue if non confirmed", %{conn: conn, issue: issue} do
       [sponsorship1, sponsorship2] = insert_pair(:sponsorship, issue: issue)
 
       conn = get(conn, Routes.newsletter_issue_path(conn, :show, issue.newsletter_id, issue))
@@ -35,6 +35,31 @@ defmodule SponsorlyWeb.IssueControllerTest do
 
       assert response =~ sponsorship2.user.email
       assert response =~ sponsorship2.copy
+    end
+
+    test "list only confirmed sponsorship of an issue", %{conn: conn, issue: issue} do
+      sponsorship = insert(:sponsorship, issue: issue)
+      confirmed_sponsorship = insert(:confirmed_sponsorship, issue: issue)
+
+      conn = get(conn, Routes.newsletter_issue_path(conn, :show, issue.newsletter_id, issue))
+      response = html_response(conn, 200)
+      assert response =~ confirmed_sponsorship.user.email
+      assert response =~ confirmed_sponsorship.copy
+
+      refute response =~ sponsorship.user.email
+      refute response =~ sponsorship.copy
+    end
+
+    test "show button to update copy if it changed", %{conn: conn, issue: issue} do
+      confirmed_sponsorship = insert(:confirmed_sponsorship, issue: issue)
+      attrs =
+        params_for(:sponsorship, id: confirmed_sponsorship.sponsorship_id)
+        |> Map.to_list()
+      Sponsorly.Repo.update_all(Sponsorly.Sponsorships.Sponsorship, set: attrs)
+
+      conn = get(conn, Routes.newsletter_issue_path(conn, :show, issue.newsletter_id, issue))
+      response = html_response(conn, 200)
+      assert response =~ "Review changes to copy"
     end
   end
 

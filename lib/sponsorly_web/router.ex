@@ -30,6 +30,7 @@ defmodule SponsorlyWeb.Router do
     end
 
     resources "/sponsorships", SponsorshipController
+    resources "/confirmed_sponsorships", ConfirmedSponsorshipController, only: [:create, :delete, :edit, :update]
   end
 
   # Other scopes may use custom stacks.

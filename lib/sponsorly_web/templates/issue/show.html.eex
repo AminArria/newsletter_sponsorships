@@ -16,18 +16,41 @@
 <span><%= link "Edit", to: Routes.newsletter_issue_path(@conn, :edit, @newsletter, @issue) %></span>
 <span><%= link "Back", to: Routes.newsletter_issue_path(@conn, :index, @newsletter) %></span>
 
-<h2>Sponsorships</h2>
+<%= if @issue.confirmed_sponsorship do %>
+  <h2>Confirmed Sponsorship</h2>
 
-<ul>
-  <%= for sponsorship <- @issue.sponsorships do %>
+  <ul>
     <li>
       <strong>User email:</strong>
-      <%= sponsorship.user.email %>
+      <%= @issue.confirmed_sponsorship.user.email %>
     </li>
-
     <li>
       <strong>Copy:</strong>
-      <%= sponsorship.copy %>
+      <%= @issue.confirmed_sponsorship.copy %>
     </li>
-  <% end %>
-</ul>
+    <%= if @issue.confirmed_sponsorship.copy != @issue.confirmed_sponsorship.sponsorship.copy do %>
+      <%= link "Review changes to copy", to: Routes.confirmed_sponsorship_path(@conn, :edit, @issue.confirmed_sponsorship) %>
+    <% end %>
+    <%= link "Cancel sponsorship", to: Routes.confirmed_sponsorship_path(@conn, :delete, @issue.confirmed_sponsorship), method: :delete, data: [confirm: "Are you sure you want to cancel this sponsorship?"] %>
+<% else %>
+  <h2>Sponsorships</h2>
+
+  <ul>
+    <%= for sponsorship <- @issue.sponsorships do %>
+      <li>
+        <strong>User email:</strong>
+        <%= sponsorship.user.email %>
+      </li>
+      <li>
+        <strong>Copy:</strong>
+        <%= sponsorship.copy %>
+      </li>
+      <%= form_for :confirmed_sponsorship, Routes.confirmed_sponsorship_path(@conn, :create), fn f -> %>
+        <%= hidden_input f, :issue_id, value: @issue.id %>
+        <%= hidden_input f, :sponsorship_id, value: sponsorship.id %>
+        <%= submit "Confirm sponsorship", data: [confirm: "Are you sure you want to confirm this sponsorship?"] %>
+      <% end %>
+      <hr>
+    <% end %>
+  </ul>
+<% end %>

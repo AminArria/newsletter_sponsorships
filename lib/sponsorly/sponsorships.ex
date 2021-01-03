@@ -5,8 +5,8 @@ defmodule Sponsorly.Sponsorships do
 
   import Ecto.Query, warn: false
   alias Sponsorly.Repo
-
   alias Sponsorly.Sponsorships.Sponsorship
+  alias Sponsorly.Sponsorships.ConfirmedSponsorship
 
   @doc """
   Returns the list of sponsorships of a user.
@@ -69,6 +69,31 @@ defmodule Sponsorly.Sponsorships do
 
     Repo.one!(q)
     |> Repo.preload(issue: :newsletter)
+  end
+
+  @doc """
+  Gets a single sponsorship of an issue.
+
+  Raises `Ecto.NoResultsError` if the Sponsorship does not exist.
+
+  ## Examples
+
+      iex> get_sponsorship_for_issue!(issue_id, 123)
+      %Sponsorship{}
+
+      iex> get_sponsorship_for_issue!(issue_id, 456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_sponsorship_for_issue!(issue_id, id) do
+    q =
+      from s in Sponsorship,
+      where: s.id == ^id and
+             s.issue_id == ^issue_id and
+             not s.deleted
+
+    Repo.one!(q)
+    |> Repo.preload(:issue)
   end
 
   @doc """
@@ -142,5 +167,89 @@ defmodule Sponsorly.Sponsorships do
 
   def change_sponsorship(%Sponsorship{} = sponsorship, attrs) do
     Sponsorship.update_changeset(sponsorship, attrs)
+  end
+
+  @doc """
+  Gets a single confirmed_sponsorship.
+
+  Raises `Ecto.NoResultsError` if the Confirmed sponsorship does not exist.
+
+  ## Examples
+
+      iex> get_confirmed_sponsorship!(123)
+      %ConfirmedSponsorship{}
+
+      iex> get_confirmed_sponsorship!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_confirmed_sponsorship!(id) do
+    Repo.get!(ConfirmedSponsorship, id)
+    |> Repo.preload([:issue, :sponsorship])
+  end
+
+  @doc """
+  Creates a confirmed_sponsorship.
+
+  ## Examples
+
+      iex> create_confirmed_sponsorship(%{field: value})
+      {:ok, %ConfirmedSponsorship{}}
+
+      iex> create_confirmed_sponsorship(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_confirmed_sponsorship(attrs \\ %{}) do
+    %ConfirmedSponsorship{}
+    |> ConfirmedSponsorship.create_changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a confirmed_sponsorship.
+
+  ## Examples
+
+      iex> update_confirmed_sponsorship(confirmed_sponsorship, %{field: new_value})
+      {:ok, %ConfirmedSponsorship{}}
+
+      iex> update_confirmed_sponsorship(confirmed_sponsorship, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_confirmed_sponsorship(%ConfirmedSponsorship{} = confirmed_sponsorship, attrs) do
+    confirmed_sponsorship
+    |> ConfirmedSponsorship.update_changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a confirmed_sponsorship.
+
+  ## Examples
+
+      iex> delete_confirmed_sponsorship(confirmed_sponsorship)
+      {:ok, %ConfirmedSponsorship{}}
+
+      iex> delete_confirmed_sponsorship(confirmed_sponsorship)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_confirmed_sponsorship(%ConfirmedSponsorship{} = confirmed_sponsorship) do
+    Repo.delete(confirmed_sponsorship)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking confirmed_sponsorship changes.
+
+  ## Examples
+
+      iex> change_confirmed_sponsorship(confirmed_sponsorship)
+      %Ecto.Changeset{data: %ConfirmedSponsorship{}}
+
+  """
+  def change_confirmed_sponsorship(%ConfirmedSponsorship{} = confirmed_sponsorship, attrs \\ %{}) do
+    ConfirmedSponsorship.update_changeset(confirmed_sponsorship, attrs)
   end
 end

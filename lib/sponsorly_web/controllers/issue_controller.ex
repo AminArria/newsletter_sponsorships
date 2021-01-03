@@ -32,7 +32,7 @@ defmodule SponsorlyWeb.IssueController do
   def show(conn, %{"id" => id}) do
     issue =
       Newsletters.get_issue!(conn.assigns.newsletter.id, id)
-      |> Sponsorly.Repo.preload(sponsorships: :user)
+      |> Sponsorly.Repo.preload(sponsorships: :user, confirmed_sponsorship: [:user, :sponsorship])
 
     sponsorships = Sponsorships.list_sponsorships_for_issue(issue.id)
     render(conn, "show.html", issue: issue, sponsorships: sponsorships)

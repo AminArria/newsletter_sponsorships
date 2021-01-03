@@ -1,0 +1,21 @@
+<h1>Edit Confirmed sponsorship</h1>
+
+<%= form_for @changeset, Routes.confirmed_sponsorship_path(@conn, :update, @confirmed_sponsorship), fn f -> %>
+  <%= if @changeset.action do %>
+    <div class="alert alert-danger">
+      <p>Oops, something went wrong! Please check the errors below.</p>
+    </div>
+  <% end %>
+
+  <%= label f, :old_copy %>
+  <%= textarea f, :old_copy, value: @confirmed_sponsorship.copy, readonly: true %>
+  <%= error_tag f, :old_copy %>
+
+  <%= label f, :copy %>
+  <%= textarea f, :copy, value: @confirmed_sponsorship.sponsorship.copy, readonly: true %>
+  <%= error_tag f, :copy %>
+
+  <div>
+    <%= submit "Update copy" %>
+  </div>
+<% end %>

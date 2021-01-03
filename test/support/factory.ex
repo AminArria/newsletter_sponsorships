@@ -34,4 +34,15 @@ defmodule Sponsorly.Factory do
       user: build(:confirmed_user),
     }
   end
+
+  def confirmed_sponsorship_factory(attrs) do
+    sponsorship = insert(:sponsorship, attrs)
+
+    %Sponsorly.Sponsorships.ConfirmedSponsorship{
+      copy: sequence("copy text"),
+      sponsorship: sponsorship,
+      issue: sponsorship.issue,
+      user: sponsorship.user,
+    }
+  end
 end

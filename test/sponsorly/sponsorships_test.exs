@@ -71,4 +71,60 @@ defmodule Sponsorly.SponsorshipsTest do
       assert %Ecto.Changeset{} = Sponsorships.change_sponsorship(sponsorship)
     end
   end
+
+  describe "confirmed_sponsorships" do
+    alias Sponsorly.Sponsorships.ConfirmedSponsorship
+
+    @invalid_attrs %{copy: nil}
+
+    test "get_confirmed_sponsorship!/1 returns the confirmed_sponsorship with given id" do
+      confirmed_sponsorship =
+        insert(:confirmed_sponsorship)
+        |> unload_assocs([:user, issue: [:newsletter], sponsorship: [:issue, :user]])
+      assert Sponsorships.get_confirmed_sponsorship!(confirmed_sponsorship.id) == confirmed_sponsorship
+    end
+
+    test "create_confirmed_sponsorship/1 with valid data creates a confirmed_sponsorship" do
+      attrs = params_with_assocs(:confirmed_sponsorship)
+      assert {:ok, %ConfirmedSponsorship{} = confirmed_sponsorship} = Sponsorships.create_confirmed_sponsorship(attrs)
+      assert confirmed_sponsorship.copy == attrs.copy
+      assert confirmed_sponsorship.issue_id == attrs.issue_id
+      assert confirmed_sponsorship.user_id == attrs.user_id
+      assert confirmed_sponsorship.sponsorship_id == attrs.sponsorship_id
+    end
+
+    test "create_confirmed_sponsorship/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Sponsorships.create_confirmed_sponsorship(@invalid_attrs)
+    end
+
+    test "update_confirmed_sponsorship/2 with valid data updates the confirmed_sponsorship" do
+      original_confirmed_sponsorship = insert(:confirmed_sponsorship)
+      attrs = params_with_assocs(:confirmed_sponsorship)
+      assert {:ok, %ConfirmedSponsorship{} = confirmed_sponsorship} = Sponsorships.update_confirmed_sponsorship(original_confirmed_sponsorship, attrs)
+      assert confirmed_sponsorship.copy == attrs.copy
+      assert confirmed_sponsorship.issue_id == original_confirmed_sponsorship.issue_id
+      assert confirmed_sponsorship.user_id == original_confirmed_sponsorship.user_id
+      assert confirmed_sponsorship.sponsorship_id == original_confirmed_sponsorship.sponsorship_id
+    end
+
+    test "update_confirmed_sponsorship/2 with invalid data returns error changeset" do
+      confirmed_sponsorship =
+        insert(:confirmed_sponsorship)
+        |> unload_assocs([:user, issue: [:newsletter], sponsorship: [:issue, :user]])
+
+      assert {:error, %Ecto.Changeset{}} = Sponsorships.update_confirmed_sponsorship(confirmed_sponsorship, @invalid_attrs)
+      assert Sponsorships.get_confirmed_sponsorship!(confirmed_sponsorship.id) == confirmed_sponsorship
+    end
+
+    test "delete_confirmed_sponsorship/1 deletes the confirmed_sponsorship" do
+      confirmed_sponsorship = insert(:confirmed_sponsorship)
+      assert {:ok, %ConfirmedSponsorship{}} = Sponsorships.delete_confirmed_sponsorship(confirmed_sponsorship)
+      assert_raise Ecto.NoResultsError, fn -> Sponsorships.get_confirmed_sponsorship!(confirmed_sponsorship.id) end
+    end
+
+    test "change_confirmed_sponsorship/1 returns a confirmed_sponsorship changeset" do
+      confirmed_sponsorship = insert(:confirmed_sponsorship)
+      assert %Ecto.Changeset{} = Sponsorships.change_confirmed_sponsorship(confirmed_sponsorship)
+    end
+  end
 end
