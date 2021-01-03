@@ -1,3 +1,4 @@
+
 defmodule Sponsorly.DataCase do
   @moduledoc """
   This module defines the setup for tests requiring
@@ -60,20 +61,28 @@ defmodule Sponsorly.DataCase do
   """
 
   def unload_assocs(data, assocs) do
-    Enum.reduce(assocs, data, fn field, acc ->
-      cardinality =
-        case Map.get(data, field) do
-          value when is_list(value) -> :many
-          _value -> :one
-        end
+    Enum.reduce(assocs, data, fn
+      {field, fields}, acc when is_list(fields) ->
+        new_field_value =
+          Map.get(data, field)
+          |> unload_assocs(fields)
 
-      unloaded_field = %Ecto.Association.NotLoaded{
-        __field__: field,
-        __owner__: data.__struct__,
-        __cardinality__: cardinality
-      }
+        Map.put(acc, field, new_field_value)
 
-      Map.put(acc, field, unloaded_field)
+      field, acc ->
+        cardinality =
+          case Map.get(data, field) do
+            value when is_list(value) -> :many
+            _value -> :one
+          end
+
+        unloaded_field = %Ecto.Association.NotLoaded{
+          __field__: field,
+          __owner__: data.__struct__,
+          __cardinality__: cardinality
+        }
+
+        Map.put(acc, field, unloaded_field)
     end)
   end
 

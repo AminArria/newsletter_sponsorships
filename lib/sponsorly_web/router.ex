@@ -28,6 +28,8 @@ defmodule SponsorlyWeb.Router do
     resources "/newsletters", NewsletterController do
       resources "/issues", IssueController
     end
+
+    resources "/sponsorships", SponsorshipController
   end
 
   # Other scopes may use custom stacks.

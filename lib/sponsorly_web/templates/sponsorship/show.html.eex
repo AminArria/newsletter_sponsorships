@@ -1,0 +1,21 @@
+<h1>Show Sponsorship</h1>
+
+<ul>
+  <li>
+    <strong>Newsletter:</strong>
+    <%= link @sponsorship.issue.newsletter.name, to: Routes.newsletter_path(@conn, :show, @sponsorship.issue.newsletter) %>
+  </li>
+
+  <li>
+    <strong>Issue:</strong>
+    <%= link issue_name(@sponsorship.issue), to: Routes.newsletter_issue_path(@conn, :show, @sponsorship.issue.newsletter, @sponsorship.issue) %>
+  </li>
+
+  <li>
+    <strong>Copy:</strong>
+    <%= @sponsorship.copy %>
+  </li>
+</ul>
+
+<span><%= link "Edit", to: Routes.sponsorship_path(@conn, :edit, @sponsorship) %></span>
+<span><%= link "Back", to: Routes.sponsorship_path(@conn, :index) %></span>

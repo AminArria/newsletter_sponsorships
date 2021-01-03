@@ -11,6 +11,9 @@
         <li>
           <%= link "Newsletters", to: Routes.newsletter_path(@conn, :index) %>
         </li>
+        <li>
+          <%= link "Sponsorhips", to: Routes.sponsorship_path(@conn, :index) %>
+        </li>
       </ul>
     </article>
   <% end %>

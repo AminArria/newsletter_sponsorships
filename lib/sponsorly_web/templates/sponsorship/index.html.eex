@@ -1,0 +1,32 @@
+<h1>Listing Sponsorships</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Newsletter</th>
+      <th>Issue</th>
+
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+<%= for sponsorship <- @sponsorships do %>
+    <tr>
+      <td>
+        <span><%= link sponsorship.issue.newsletter.name, to: Routes.newsletter_path(@conn, :show, sponsorship.issue.newsletter) %></span>
+      </td>
+      <td>
+        <span><%= link issue_name(sponsorship.issue), to: Routes.newsletter_issue_path(@conn, :show, sponsorship.issue.newsletter, sponsorship.issue) %></span>
+      </td>
+
+      <td>
+        <span><%= link "Show", to: Routes.sponsorship_path(@conn, :show, sponsorship) %></span>
+        <span><%= link "Edit", to: Routes.sponsorship_path(@conn, :edit, sponsorship) %></span>
+        <span><%= link "Delete", to: Routes.sponsorship_path(@conn, :delete, sponsorship), method: :delete, data: [confirm: "Are you sure?"] %></span>
+      </td>
+    </tr>
+<% end %>
+  </tbody>
+</table>
+
+<span><%= link "New Sponsorship", to: Routes.sponsorship_path(@conn, :new) %></span>

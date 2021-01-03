@@ -126,6 +126,24 @@ defmodule Sponsorly.Newsletters do
   alias Sponsorly.Newsletters.Issue
 
   @doc """
+  Returns the list of issues
+
+  ## Examples
+
+      iex> list_issues()
+      [%Issue{}, ...]
+
+  """
+  def list_issues() do
+    q =
+      from i in Issue,
+      where: not i.deleted
+
+    Repo.all(q)
+    |> Repo.preload(:newsletter)
+  end
+
+  @doc """
   Returns the list of issues of a newsletter.
 
   ## Examples

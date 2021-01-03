@@ -26,4 +26,12 @@ defmodule Sponsorly.Factory do
       newsletter: build(:newsletter)
     }
   end
+
+  def sponsorship_factory do
+    %Sponsorly.Sponsorships.Sponsorship{
+      copy: sequence("copy text"),
+      issue: build(:issue),
+      user: build(:confirmed_user),
+    }
+  end
 end
