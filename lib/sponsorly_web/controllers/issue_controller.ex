@@ -3,6 +3,7 @@ defmodule SponsorlyWeb.IssueController do
 
   alias Sponsorly.Newsletters
   alias Sponsorly.Newsletters.Issue
+  alias Sponsorly.Sponsorships
 
   plug :fetch_newsletter
 
@@ -29,8 +30,12 @@ defmodule SponsorlyWeb.IssueController do
   end
 
   def show(conn, %{"id" => id}) do
-    issue = Newsletters.get_issue!(conn.assigns.newsletter.id, id)
-    render(conn, "show.html", issue: issue)
+    issue =
+      Newsletters.get_issue!(conn.assigns.newsletter.id, id)
+      |> Sponsorly.Repo.preload(sponsorships: :user)
+
+    sponsorships = Sponsorships.list_sponsorships_for_issue(issue.id)
+    render(conn, "show.html", issue: issue, sponsorships: sponsorships)
   end
 
   def edit(conn, %{"id" => id}) do

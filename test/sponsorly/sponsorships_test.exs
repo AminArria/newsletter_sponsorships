@@ -15,6 +15,13 @@ defmodule Sponsorly.SponsorshipsTest do
       assert Sponsorships.list_sponsorships(sponsorship.user_id) == [sponsorship]
     end
 
+    test "list_sponsorships_for_issue/1 returns all sponsorships of an issue" do
+      sponsorship = insert(:sponsorship) |> unload_assocs([:issue])
+      insert(:sponsorship)
+
+      assert Sponsorships.list_sponsorships_for_issue(sponsorship.issue_id) == [sponsorship]
+    end
+
     test "get_sponsorship!/2 returns the sponsorship of a user with given id" do
       sponsorship = insert(:sponsorship) |> unload_assocs([:user, issue: [newsletter: [:user]]])
       other_sponsorship = insert(:sponsorship)

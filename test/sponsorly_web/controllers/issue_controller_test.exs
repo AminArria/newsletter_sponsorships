@@ -22,6 +22,22 @@ defmodule SponsorlyWeb.IssueControllerTest do
     end
   end
 
+  describe "show" do
+    setup :create_issue
+
+    test "lists all sponsorships of an issue", %{conn: conn, issue: issue} do
+      [sponsorship1, sponsorship2] = insert_pair(:sponsorship, issue: issue)
+
+      conn = get(conn, Routes.newsletter_issue_path(conn, :show, issue.newsletter_id, issue))
+      response = html_response(conn, 200)
+      assert response =~ sponsorship1.user.email
+      assert response =~ sponsorship1.copy
+
+      assert response =~ sponsorship2.user.email
+      assert response =~ sponsorship2.copy
+    end
+  end
+
   describe "new issue" do
     test "renders form", %{conn: conn, newsletter: newsletter} do
       conn = get(conn, Routes.newsletter_issue_path(conn, :new, newsletter))

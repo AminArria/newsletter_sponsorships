@@ -15,3 +15,19 @@
 
 <span><%= link "Edit", to: Routes.newsletter_issue_path(@conn, :edit, @newsletter, @issue) %></span>
 <span><%= link "Back", to: Routes.newsletter_issue_path(@conn, :index, @newsletter) %></span>
+
+<h2>Sponsorships</h2>
+
+<ul>
+  <%= for sponsorship <- @issue.sponsorships do %>
+    <li>
+      <strong>User email:</strong>
+      <%= sponsorship.user.email %>
+    </li>
+
+    <li>
+      <strong>Copy:</strong>
+      <%= sponsorship.copy %>
+    </li>
+  <% end %>
+</ul>

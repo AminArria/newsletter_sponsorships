@@ -8,6 +8,7 @@ defmodule Sponsorly.Newsletters.Issue do
     field :deleted, :boolean, default: false
 
     belongs_to :newsletter, Sponsorly.Newsletters.Newsletter
+    has_many :sponsorships, Sponsorly.Sponsorships.Sponsorship
 
     timestamps()
   end

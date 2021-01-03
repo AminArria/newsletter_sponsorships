@@ -28,6 +28,25 @@ defmodule Sponsorly.Sponsorships do
   end
 
   @doc """
+  Returns the list of sponsorships for an issue.
+
+  ## Examples
+
+      iex> list_sponsorships_for_issue(issue_id)
+      [%Sponsorship{}, ...]
+
+  """
+  def list_sponsorships_for_issue(issue_id) do
+    q =
+      from s in Sponsorship,
+      where: s.issue_id == ^issue_id and
+             not s.deleted
+
+    Repo.all(q)
+    |> Repo.preload(:user)
+  end
+
+  @doc """
   Gets a single sponsorship of a user.
 
   Raises `Ecto.NoResultsError` if the Sponsorship does not exist.
