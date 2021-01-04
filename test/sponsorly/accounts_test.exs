@@ -506,4 +506,39 @@ defmodule Sponsorly.AccountsTest do
       refute inspect(%User{password: "123456"}) =~ "password: \"123456\""
     end
   end
+
+  describe "onboard_user/1" do
+    setup do
+      %{user: unboarded_user_fixture()}
+    end
+
+    test "requires slug to be set", %{user: user} do
+      {:error, changeset} = Accounts.onboard_user(user, %{})
+
+      assert %{slug: ["can't be blank"]} = errors_on(changeset)
+    end
+
+    test "validates format for slug", %{user: user} do
+      {:error, changeset} = Accounts.onboard_user(user, %{slug: "not valid"})
+      assert %{slug: ["must only contain lowercase characters (a-z), numbers (0-9), and \"-\""]} = errors_on(changeset)
+
+      {:error, changeset} = Accounts.onboard_user(user, %{slug: "noUppercase"})
+      assert %{slug: ["must only contain lowercase characters (a-z), numbers (0-9), and \"-\""]} = errors_on(changeset)
+
+      {:error, changeset} = Accounts.onboard_user(user, %{slug: "no*"})
+      assert %{slug: ["must only contain lowercase characters (a-z), numbers (0-9), and \"-\""]} = errors_on(changeset)
+    end
+
+    test "validates email uniqueness", %{user: user} do
+      %{slug: slug} = user_fixture()
+      {:error, changeset} = Accounts.onboard_user(user, %{slug: slug})
+      assert "has already been taken" in errors_on(changeset).slug
+    end
+
+    test "onboards users", %{user: user} do
+      slug = unique_user_slug()
+      {:ok, user} = Accounts.onboard_user(user, %{slug: slug})
+      assert user.slug == slug
+    end
+  end
 end

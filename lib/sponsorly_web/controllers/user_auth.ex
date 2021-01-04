@@ -157,4 +157,17 @@ defmodule SponsorlyWeb.UserAuth do
   defp maybe_store_return_to(conn), do: conn
 
   defp signed_in_path(_conn), do: "/"
+
+  @doc """
+  Redirects the user if it needs to be onboarded.
+  """
+  def check_if_onboarded(conn, _opts) do
+    if conn.assigns.current_user.slug do
+      conn
+    else
+      conn
+      |> redirect(to: Routes.user_onboarding_path(conn, :edit))
+      |> halt()
+    end
+  end
 end

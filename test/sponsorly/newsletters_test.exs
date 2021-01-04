@@ -33,6 +33,7 @@ defmodule Sponsorly.NewslettersTest do
       assert {:ok, %Newsletter{} = newsletter} = Newsletters.create_newsletter(attrs)
       assert newsletter.interval_days == newsletter.interval_days
       assert newsletter.name == newsletter.name
+      assert newsletter.slug == newsletter.slug
       assert newsletter.sponsor_before_days == newsletter.sponsor_before_days
       assert newsletter.sponsor_in_days == newsletter.sponsor_in_days
       assert newsletter.user_id == newsletter.user_id
@@ -48,6 +49,7 @@ defmodule Sponsorly.NewslettersTest do
       assert {:ok, %Newsletter{} = newsletter} = Newsletters.update_newsletter(original_newsletter, attrs)
       assert newsletter.interval_days == attrs.interval_days
       assert newsletter.name == attrs.name
+      assert newsletter.slug == attrs.slug
       assert newsletter.sponsor_before_days == attrs.sponsor_before_days
       assert newsletter.sponsor_in_days == attrs.sponsor_in_days
       # Can't change user_id
@@ -94,6 +96,14 @@ defmodule Sponsorly.NewslettersTest do
 
         {issues_seen + 1, next_at}
       end)
+    end
+
+    test "slug of a newsletter must be unique for a user" do
+      newsletter = insert(:newsletter_with_next_issue)
+      same_user_new_newsletter_attrs = params_for(:newsletter_with_next_issue, user_id: newsletter.user_id, slug: newsletter.slug)
+
+      {:error, changeset} = Newsletters.create_newsletter(same_user_new_newsletter_attrs)
+      assert "has already been taken" in errors_on(changeset).slug
     end
   end
 

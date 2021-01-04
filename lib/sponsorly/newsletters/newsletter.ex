@@ -3,11 +3,12 @@ defmodule Sponsorly.Newsletters.Newsletter do
   import Ecto.Changeset
 
   schema "newsletters" do
+    field :deleted, :boolean, default: false
     field :interval_days, :integer
     field :name, :string
+    field :slug, :string
     field :sponsor_before_days, :integer
     field :sponsor_in_days, :integer
-    field :deleted, :boolean, default: false
 
     field :next_issue_at, :utc_datetime, virtual: true
 
@@ -20,8 +21,8 @@ defmodule Sponsorly.Newsletters.Newsletter do
   @doc false
   def create_changeset(newsletter, attrs) do
     newsletter
-    |> cast(attrs, [:name, :interval_days, :next_issue_at, :sponsor_before_days, :sponsor_in_days, :user_id])
-    |> validate_required([:name, :interval_days, :next_issue_at, :sponsor_before_days, :sponsor_in_days, :user_id])
+    |> cast(attrs, [:name, :interval_days, :next_issue_at, :slug, :sponsor_before_days, :sponsor_in_days, :user_id])
+    |> validate_required([:name, :interval_days, :next_issue_at, :slug, :sponsor_before_days, :sponsor_in_days, :user_id])
     |> common_validations()
     |> validate_next_issue()
     |> prepare_changes(&generate_issues/1)
@@ -61,13 +62,15 @@ defmodule Sponsorly.Newsletters.Newsletter do
 
   def update_changeset(newsletter, attrs) do
     newsletter
-    |> cast(attrs, [:name, :interval_days, :sponsor_before_days, :sponsor_in_days])
-    |> validate_required([:name, :interval_days, :sponsor_before_days, :sponsor_in_days])
+    |> cast(attrs, [:name, :interval_days, :slug, :sponsor_before_days, :sponsor_in_days])
+    |> validate_required([:name, :interval_days, :slug, :sponsor_before_days, :sponsor_in_days])
     |> common_validations()
   end
 
   defp common_validations(changeset) do
     changeset
+    |> validate_format(:slug, ~r/^[a-z0-9-]+$/, message: "must only contain lowercase characters (a-z), numbers (0-9), and \"-\"")
+    |> unique_constraint([:slug, :user_id])
     # TODO: allow publishing more than once a day
     |> validate_number(:interval_days, greater_than_or_equal_to: 1, less_than_or_equal_to: 7)
     # Can't sponsor after publishing

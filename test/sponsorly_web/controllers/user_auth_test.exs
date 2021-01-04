@@ -170,4 +170,19 @@ defmodule SponsorlyWeb.UserAuthTest do
       refute conn.status
     end
   end
+
+  describe "check_if_onboarded/2" do
+    test "redirects if user is not onboarded", %{conn: conn} do
+      unboarded_user = unboarded_user_fixture()
+      conn = conn |> assign(:current_user, unboarded_user) |> UserAuth.check_if_onboarded([])
+      assert conn.halted
+      assert redirected_to(conn) == Routes.user_onboarding_path(conn, :edit)
+    end
+
+    test "does not redirect if user is onboarded", %{conn: conn, user: user} do
+      conn = conn |> assign(:current_user, user) |> UserAuth.check_if_onboarded([])
+      refute conn.halted
+      refute conn.status
+    end
+  end
 end

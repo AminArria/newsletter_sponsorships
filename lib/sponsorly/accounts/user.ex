@@ -4,10 +4,12 @@ defmodule Sponsorly.Accounts.User do
 
   @derive {Inspect, except: [:password]}
   schema "users" do
-    field :email, :string
-    field :password, :string, virtual: true
-    field :hashed_password, :string
     field :confirmed_at, :naive_datetime
+    field :email, :string
+    field :hashed_password, :string
+    field :slug, :string
+
+    field :password, :string, virtual: true
 
     timestamps()
   end
@@ -108,6 +110,17 @@ defmodule Sponsorly.Accounts.User do
   def confirm_changeset(user) do
     now = NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second)
     change(user, confirmed_at: now)
+  end
+
+  @doc """
+  Onboards the account by setting `slug`
+  """
+  def onboard_changeset(user, attrs) do
+    user
+    |> cast(attrs, [:slug])
+    |> validate_required([:slug])
+    |> validate_format(:slug, ~r/^[a-z0-9-]+$/, message: "must only contain lowercase characters (a-z), numbers (0-9), and \"-\"")
+    |> unique_constraint(:slug)
   end
 
   @doc """

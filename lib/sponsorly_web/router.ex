@@ -16,6 +16,11 @@ defmodule SponsorlyWeb.Router do
     plug :accepts, ["json"]
   end
 
+  pipeline :user do
+    plug :require_authenticated_user
+    plug :check_if_onboarded
+  end
+
   scope "/", SponsorlyWeb do
     pipe_through :browser
 
@@ -23,7 +28,7 @@ defmodule SponsorlyWeb.Router do
   end
 
   scope "/", SponsorlyWeb do
-    pipe_through [:browser, :require_authenticated_user]
+    pipe_through [:browser, :user]
 
     resources "/newsletters", NewsletterController do
       resources "/issues", IssueController
@@ -31,6 +36,13 @@ defmodule SponsorlyWeb.Router do
 
     resources "/sponsorships", SponsorshipController
     resources "/confirmed_sponsorships", ConfirmedSponsorshipController, only: [:create, :delete, :edit, :update]
+  end
+
+  scope "/", SponsorlyWeb do
+    pipe_through [:browser, :require_authenticated_user]
+
+    get "/users/onboard", UserOnboardingController, :edit
+    put "/users/onboard", UserOnboardingController, :update
   end
 
   # Other scopes may use custom stacks.
@@ -70,7 +82,7 @@ defmodule SponsorlyWeb.Router do
   end
 
   scope "/", SponsorlyWeb do
-    pipe_through [:browser, :require_authenticated_user]
+    pipe_through [:browser, :user]
 
     get "/users/settings", UserSettingsController, :edit
     put "/users/settings", UserSettingsController, :update

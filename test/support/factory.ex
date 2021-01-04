@@ -13,10 +13,20 @@ defmodule Sponsorly.Factory do
     %Sponsorly.Newsletters.Newsletter{
       interval_days: :rand.uniform(7),
       name: sequence("name"),
+      slug: sequence(:slug, &"slug-#{&1}"),
       sponsor_before_days: :rand.uniform(7),
       sponsor_in_days: :rand.uniform(365),
       user: build(:confirmed_user)
     }
+  end
+
+  def newsletter_with_next_issue_factory do
+    struct!(
+      newsletter_factory(),
+      %{
+        next_issue_at: DateTime.utc_now() |> DateTime.add(24 * 60 * 60)
+      }
+    )
   end
 
   def issue_factory do

@@ -346,4 +346,28 @@ defmodule Sponsorly.Accounts do
       {:error, :user, changeset, _} -> {:error, changeset}
     end
   end
+
+  ## Onboarding
+
+  @doc """
+  Onboards a user.
+
+  ## Examples
+
+      iex> onboard_user(%{field: value})
+      {:ok, %User{}}
+
+      iex> onboard_user(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def onboard_user(user, attrs) do
+    user
+    |> User.onboard_changeset(attrs)
+    |> Repo.update()
+  end
+
+  def change_user_onboard(user) do
+    User.onboard_changeset(user, %{})
+  end
 end

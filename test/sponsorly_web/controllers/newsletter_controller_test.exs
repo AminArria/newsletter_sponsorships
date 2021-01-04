@@ -37,6 +37,7 @@ defmodule SponsorlyWeb.NewsletterControllerTest do
       conn = get(conn, Routes.newsletter_path(conn, :show, id))
       response = html_response(conn, 200)
       assert response =~ attrs.name
+      assert response =~ attrs.slug
       assert response =~ "#{attrs.interval_days}"
       assert response =~ "#{attrs.sponsor_before_days}"
       assert response =~ "#{attrs.sponsor_in_days}"
@@ -68,6 +69,7 @@ defmodule SponsorlyWeb.NewsletterControllerTest do
       conn = get(conn, Routes.newsletter_path(conn, :show, newsletter))
       response = html_response(conn, 200)
       assert response =~ attrs.name
+      assert response =~ attrs.slug
       assert response =~ "#{attrs.interval_days}"
       assert response =~ "#{attrs.sponsor_before_days}"
       assert response =~ "#{attrs.sponsor_in_days}"

@@ -8,6 +8,11 @@
   </li>
 
   <li>
+    <strong>Slug:</strong>
+    <%= @newsletter.slug %>
+  </li>
+
+  <li>
     <strong>Interval days:</strong>
     <%= @newsletter.interval_days %>
   </li>

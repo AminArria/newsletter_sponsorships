@@ -5,6 +5,7 @@ defmodule Sponsorly.AccountsFixtures do
   """
 
   def unique_user_email, do: "user#{System.unique_integer()}@example.com"
+  def unique_user_slug, do: "user#{System.unique_integer()}"
   def valid_user_password, do: "hello world!"
 
   def user_fixture(attrs \\ %{}) do
@@ -17,6 +18,7 @@ defmodule Sponsorly.AccountsFixtures do
       |> Sponsorly.Accounts.register_user()
 
     Sponsorly.Accounts.User.confirm_changeset(user)
+    |> Sponsorly.Accounts.User.onboard_changeset(%{slug: unique_user_slug()})
     |> Sponsorly.Repo.update!
   end
 
@@ -30,6 +32,19 @@ defmodule Sponsorly.AccountsFixtures do
       |> Sponsorly.Accounts.register_user()
 
     user
+  end
+
+  def unboarded_user_fixture(attrs \\ %{}) do
+    {:ok, user} =
+      attrs
+      |> Enum.into(%{
+        email: unique_user_email(),
+        password: valid_user_password()
+      })
+      |> Sponsorly.Accounts.register_user()
+
+    Sponsorly.Accounts.User.confirm_changeset(user)
+    |> Sponsorly.Repo.update!
   end
 
   def extract_user_token(fun) do
