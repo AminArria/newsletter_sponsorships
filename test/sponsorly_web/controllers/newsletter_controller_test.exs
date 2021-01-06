@@ -18,6 +18,18 @@ defmodule SponsorlyWeb.NewsletterControllerTest do
     end
   end
 
+  describe "slug index" do
+    test "lists all newsletters of a user slug", %{conn: conn} do
+      newsletter = insert(:newsletter)
+      other_newsletter = insert(:newsletter)
+
+      conn = get(conn, Routes.newsletter_path(conn, :slug_index, newsletter.user.slug))
+      response = html_response(conn, 200)
+      assert response =~ newsletter.name
+      refute response =~ other_newsletter.name
+    end
+  end
+
   describe "new newsletter" do
     test "renders form", %{conn: conn} do
       conn = get(conn, Routes.newsletter_path(conn, :new))

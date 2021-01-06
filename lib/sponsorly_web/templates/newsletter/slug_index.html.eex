@@ -1,0 +1,23 @@
+<h1>Listing Newsletters</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Interval days</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+<%= for newsletter <- @newsletters do %>
+    <tr>
+      <td><%= newsletter.name %></td>
+      <td><%= newsletter.interval_days %></td>
+
+      <td>
+        <span><%= link "Issues", to: Routes.issue_path(@conn, :slug_index, @user_slug, newsletter.slug) %></span>
+      </td>
+    </tr>
+<% end %>
+  </tbody>
+</table>

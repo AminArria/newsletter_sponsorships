@@ -27,6 +27,25 @@ defmodule Sponsorly.Newsletters do
   end
 
   @doc """
+  Returns the list of newsletters of a user slug.
+
+  ## Examples
+
+      iex> list_newsletters(user_slug)
+      [%Newsletter{}, ...]
+
+  """
+  def list_newsletters_of_slug(user_slug) do
+    q =
+      from n in Newsletter,
+      join: u in assoc(n, :user),
+      where: u.slug == ^user_slug and
+             not n.deleted
+
+    Repo.all(q)
+  end
+
+  @doc """
   Gets a single newsletter of a user.
 
   Raises `Ecto.NoResultsError` if the Newsletter does not exist for that user.
@@ -45,6 +64,31 @@ defmodule Sponsorly.Newsletters do
       from n in Newsletter,
       where: n.id == ^id and
              n.user_id == ^user_id and
+             not n.deleted
+
+    Repo.one!(q)
+  end
+
+  @doc """
+  Gets a single newsletter of a user slug and newsletter slug.
+
+  Raises `Ecto.NoResultsError` if the Newsletter does not exist for that user.
+
+  ## Examples
+
+      iex> get_newsletter!(user_slug, newsletter_slug)
+      %Newsletter{}
+
+      iex> get_newsletter!(user_slug, newsletter_slug)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_newsletter_by_slugs!(user_slug, newsletter_slug) do
+    q =
+      from n in Newsletter,
+      join: u in assoc(n, :user),
+      where: u.slug == ^user_slug and
+             n.slug == ^newsletter_slug and
              not n.deleted
 
     Repo.one!(q)
@@ -157,6 +201,31 @@ defmodule Sponsorly.Newsletters do
       from i in Issue,
       where: i.newsletter_id == ^newsletter_id and
              not i.deleted
+
+    Repo.all(q)
+  end
+
+  @doc """
+  Returns the list of issues of a user slug and newsletter slug.
+
+  ## Examples
+
+      iex> list_issues_of_slugs(user_slug, newsletter_slug)
+      [%Issue{}, ...]
+
+  """
+  def list_issues_of_slugs(user_slug, newsletter_slug) do
+    now = DateTime.utc_now()
+
+    q =
+      from i in Issue,
+      join: n in assoc(i, :newsletter),
+      join: u in assoc(n, :user),
+      where: u.slug == ^user_slug and
+             n.slug == ^newsletter_slug and
+             i.due_at > ^now and
+             not i.deleted,
+      order_by: [asc: i.due_at]
 
     Repo.all(q)
   end

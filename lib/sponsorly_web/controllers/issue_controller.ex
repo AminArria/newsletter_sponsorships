@@ -5,7 +5,7 @@ defmodule SponsorlyWeb.IssueController do
   alias Sponsorly.Newsletters.Issue
   alias Sponsorly.Sponsorships
 
-  plug :fetch_newsletter
+  plug :fetch_newsletter when action not in [:slug_index]
 
   def index(conn, _params) do
     issues = Newsletters.list_issues(conn.assigns.newsletter.id)
@@ -65,6 +65,13 @@ defmodule SponsorlyWeb.IssueController do
     conn
     |> put_flash(:info, "Issue deleted successfully.")
     |> redirect(to: Routes.newsletter_issue_path(conn, :index, conn.assigns.newsletter))
+  end
+
+  def slug_index(conn, %{"user_slug" => user_slug, "newsletter_slug" => newsletter_slug}) do
+    changeset = Sponsorly.Sponsorships.change_sponsorship(%Sponsorly.Sponsorships.Sponsorship{})
+    newsletter = Newsletters.get_newsletter_by_slugs!(user_slug, newsletter_slug)
+    issues = Newsletters.list_issues_of_slugs(user_slug, newsletter_slug)
+    render(conn, "slug_index.html", newsletter: newsletter, issues: issues, changeset: changeset)
   end
 
   defp fetch_newsletter(conn, _) do

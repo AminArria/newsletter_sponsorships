@@ -45,6 +45,13 @@ defmodule SponsorlyWeb.Router do
     put "/users/onboard", UserOnboardingController, :update
   end
 
+  scope "/", SponsorlyWeb do
+    pipe_through [:browser]
+
+    get "/sponsor/:user_slug", NewsletterController, :slug_index
+    get "/sponsor/:user_slug/:newsletter_slug", IssueController, :slug_index
+  end
+
   # Other scopes may use custom stacks.
   # scope "/api", SponsorlyWeb do
   #   pipe_through :api

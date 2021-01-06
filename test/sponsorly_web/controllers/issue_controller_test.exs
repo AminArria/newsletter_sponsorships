@@ -22,6 +22,18 @@ defmodule SponsorlyWeb.IssueControllerTest do
     end
   end
 
+  describe "slug index" do
+    test "lists all newsletters of a user slug", %{conn: conn} do
+      newsletter = insert(:newsletter)
+      other_newsletter = insert(:newsletter)
+
+      conn = get(conn, Routes.issue_path(conn, :slug_index, newsletter.user.slug, newsletter.slug))
+      response = html_response(conn, 200)
+      assert response =~ newsletter.name
+      refute response =~ other_newsletter.name
+    end
+  end
+
   describe "show" do
     setup :create_issue
 

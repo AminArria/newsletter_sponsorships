@@ -61,4 +61,9 @@ defmodule SponsorlyWeb.NewsletterController do
     |> put_flash(:info, "Newsletter deleted successfully.")
     |> redirect(to: Routes.newsletter_path(conn, :index))
   end
+
+  def slug_index(conn, %{"user_slug" => user_slug}) do
+    newsletters = Newsletters.list_newsletters_of_slug(user_slug)
+    render(conn, "slug_index.html", user_slug: user_slug, newsletters: newsletters)
+  end
 end

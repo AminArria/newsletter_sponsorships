@@ -5,7 +5,8 @@ defmodule Sponsorly.Factory do
     %Sponsorly.Accounts.User{
       email: sequence(:email, &"email-#{&1}@example.com"),
       hashed_password: Bcrypt.hash_pwd_salt("123456781234"),
-      confirmed_at: NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second)
+      confirmed_at: NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second),
+      slug: sequence(:slug, &"slug-#{&1}")
     }
   end
 

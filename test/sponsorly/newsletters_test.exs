@@ -10,20 +10,37 @@ defmodule Sponsorly.NewslettersTest do
 
     test "list_newsletters/1 returns all newsletters of user" do
       newsletter = insert(:newsletter) |> unload_assocs([:user])
-      other_newsletter = insert(:newsletter)
+      insert(:newsletter)
 
-      assert newsletter.user_id != other_newsletter.user_id
       assert Newsletters.list_newsletters(newsletter.user_id) == [newsletter]
+    end
+
+    test "list_newsletters_of_slug/1 returns all newsletters of a user slug" do
+      user = insert(:confirmed_user)
+      newsletter = insert(:newsletter, user: user) |> unload_assocs([:user])
+      insert(:newsletter)
+
+      assert Newsletters.list_newsletters_of_slug(user.slug) == [newsletter]
     end
 
     test "get_newsletter!/2 returns the newsletter with given id of user" do
       newsletter = insert(:newsletter) |> unload_assocs([:user])
       other_user = insert(:confirmed_user)
 
-      assert newsletter.user_id != other_user.id
       assert Newsletters.get_newsletter!(newsletter.user_id, newsletter.id) == newsletter
       assert_raise Ecto.NoResultsError, fn ->
         Newsletters.get_newsletter!(newsletter.user_id, other_user.id)
+      end
+    end
+
+    test "get_newsletter_by_slugs!/2 returns the newsletter with given user slug and newsletter slug" do
+      user = insert(:confirmed_user)
+      other_user = insert(:confirmed_user)
+      newsletter = insert(:newsletter, user: user) |> unload_assocs([:user])
+
+      assert Newsletters.get_newsletter_by_slugs!(user.slug, newsletter.slug) == newsletter
+      assert_raise Ecto.NoResultsError, fn ->
+        Newsletters.get_newsletter_by_slugs!(other_user.slug, newsletter.slug)
       end
     end
 
@@ -117,6 +134,32 @@ defmodule Sponsorly.NewslettersTest do
       insert(:issue)
 
       assert Newsletters.list_issues(issue.newsletter_id) == [issue]
+    end
+
+    test "list_issues_of_slugs/2 returns all issues of a user slug and a newsletter slug" do
+      newsletter = insert(:newsletter)
+      other_newsletter = insert(:newsletter, user: newsletter.user)
+      issue = insert(:issue, newsletter: newsletter) |> unload_assocs([:newsletter])
+      insert(:issue, newsletter: other_newsletter)
+
+      assert Newsletters.list_issues_of_slugs(newsletter.user.slug, newsletter.slug) == [issue]
+    end
+
+    test "list_issues_of_slugs/2 returns only issues pending publishing (due_at > today)" do
+      newsletter = insert(:newsletter)
+      issue = insert(:issue, newsletter: newsletter) |> unload_assocs([:newsletter])
+      insert(:issue, newsletter: newsletter, due_at: DateTime.add(DateTime.utc_now(), -24 * 60 * 60))
+
+      assert Newsletters.list_issues_of_slugs(newsletter.user.slug, newsletter.slug) == [issue]
+    end
+
+    test "list_issues_of_slugs/2 returns issues ordered by most recent due_at" do
+      newsletter = insert(:newsletter)
+      issue1 = insert(:issue, newsletter: newsletter) |> unload_assocs([:newsletter])
+      issue2 = insert(:issue, newsletter: newsletter, due_at: DateTime.add(issue1.due_at, 1 * 24 * 60 * 60)) |> unload_assocs([:newsletter])
+      issue3 = insert(:issue, newsletter: newsletter, due_at: DateTime.add(issue1.due_at, 3 * 24 * 60 * 60)) |> unload_assocs([:newsletter])
+
+      assert Newsletters.list_issues_of_slugs(newsletter.user.slug, newsletter.slug) == [issue1, issue2, issue3]
     end
 
     test "get_issue!/2 returns the issue of a newsletter with given id" do
