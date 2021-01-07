@@ -16,8 +16,21 @@ defmodule SponsorlyWeb.SponsorshipController do
     render(conn, "new.html", changeset: changeset, issues: issues)
   end
 
-  def create(conn, %{"sponsorship" => sponsorship_params}) do
-    sponsorship_params = Map.put(sponsorship_params, "user_id", conn.assigns.current_user.id)
+  def create(%{assigns: %{current_user: nil}} = conn, %{"sponsorship" => sponsorship_params}) do
+    case Sponsorships.create_sponsorship(sponsorship_params) do
+      {:ok, sponsorship} ->
+        conn
+        |> put_flash(:info, "Sponsorship created successfully.")
+        |> redirect(to: Routes.user_registration_path(conn, :from_sponsorship, sponsorship, email: sponsorship.email))
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        issues = Newsletters.list_issues()
+        render(conn, "new.html", changeset: changeset, issues: issues)
+    end
+  end
+
+  def create(%{assigns: %{current_user: current_user}} = conn, %{"sponsorship" => sponsorship_params}) do
+    sponsorship_params = Map.put(sponsorship_params, "user_id", current_user.id)
 
     case Sponsorships.create_sponsorship(sponsorship_params) do
       {:ok, sponsorship} ->

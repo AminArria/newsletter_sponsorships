@@ -8,6 +8,12 @@
     </div>
   <% end %>
 
+  <%= unless @current_user do %>
+    <%= label f, :email %>
+    <%= email_input f, :email, required: true %>
+    <%= error_tag f, :email %>
+  <% end %>
+
   <%= label f, :issue_id %>
   <%= select f, :issue_id, Enum.map(@issues, fn issue -> {SponsorlyWeb.SponsorshipView.issue_name(issue), issue.id } end), prompt: "-- Select an issue to sponsor --", required: true %>
   <%= error_tag f, :issue_id %>

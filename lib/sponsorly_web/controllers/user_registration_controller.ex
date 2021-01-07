@@ -22,4 +22,10 @@ defmodule SponsorlyWeb.UserRegistrationController do
         render(conn, "new.html", changeset: changeset)
     end
   end
+
+  def from_sponsorship(conn, %{"sponsorship_id" => sponsorship_id, "email" => email}) do
+    sponsorship = Sponsorly.Sponsorships.get_sponsorship_by_email_and_id!(sponsorship_id, email)
+    changeset = Accounts.change_user_registration(%User{email: email})
+    render(conn, "from_sponsorship.html", changeset: changeset, sponsorship: sponsorship)
+  end
 end

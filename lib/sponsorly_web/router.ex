@@ -34,7 +34,7 @@ defmodule SponsorlyWeb.Router do
       resources "/issues", IssueController
     end
 
-    resources "/sponsorships", SponsorshipController
+    resources "/sponsorships", SponsorshipController, except: [:new, :create]
     resources "/confirmed_sponsorships", ConfirmedSponsorshipController, only: [:create, :delete, :edit, :update]
   end
 
@@ -50,6 +50,7 @@ defmodule SponsorlyWeb.Router do
 
     get "/sponsor/:user_slug", NewsletterController, :slug_index
     get "/sponsor/:user_slug/:newsletter_slug", IssueController, :slug_index
+    post "/sponsorships", SponsorshipController, :create
   end
 
   # Other scopes may use custom stacks.
@@ -80,6 +81,7 @@ defmodule SponsorlyWeb.Router do
 
     get "/users/register", UserRegistrationController, :new
     post "/users/register", UserRegistrationController, :create
+    get "/users/register/:sponsorship_id", UserRegistrationController, :from_sponsorship
     get "/users/log_in", UserSessionController, :new
     post "/users/log_in", UserSessionController, :create
     get "/users/reset_password", UserResetPasswordController, :new

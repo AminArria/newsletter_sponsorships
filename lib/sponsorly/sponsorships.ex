@@ -72,6 +72,31 @@ defmodule Sponsorly.Sponsorships do
   end
 
   @doc """
+  Gets a single sponsorship by email and id.
+
+  Raises `Ecto.NoResultsError` if the Sponsorship does not exist.
+
+  ## Examples
+
+      iex> get_sponsorship!(id, email)
+      %Sponsorship{}
+
+      iex> get_sponsorship!(id, email)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_sponsorship_by_email_and_id!(id, email) do
+    q =
+      from s in Sponsorship,
+      where: s.id == ^id and
+             s.email == ^email and
+             not s.deleted
+
+    Repo.one!(q)
+    |> Repo.preload(issue: :newsletter)
+  end
+
+  @doc """
   Gets a single sponsorship of an issue.
 
   Raises `Ecto.NoResultsError` if the Sponsorship does not exist.
