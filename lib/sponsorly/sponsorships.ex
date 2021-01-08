@@ -9,6 +9,26 @@ defmodule Sponsorly.Sponsorships do
   alias Sponsorly.Sponsorships.ConfirmedSponsorship
 
   @doc """
+  Link existing sponsorships from an email to user (owner of that email).
+
+  ## Examples
+
+      iex> link_sponsorships_to_user(user)
+      [%Sponsorship{}, ...]
+
+  """
+  def link_sponsorships_to_user(user) do
+    email = user.email
+
+    q =
+      from s in Sponsorship,
+      where: s.email == ^email and
+             is_nil(s.user_id)
+
+    Repo.update_all(q, set: [user_id: user.id])
+  end
+
+  @doc """
   Returns the list of sponsorships of a user.
 
   ## Examples

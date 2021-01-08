@@ -45,4 +45,10 @@ defmodule Sponsorly.Sponsorships.Sponsorship do
   def soft_delete_changeset(sponsorship) do
     change(sponsorship, %{deleted: true})
   end
+
+  def link_user_changeset(sponsorship, attrs) do
+    sponsorship
+    |> cast(attrs, [:user_id])
+    |> validate_required([:user_id])
+  end
 end

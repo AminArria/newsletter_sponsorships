@@ -13,6 +13,7 @@ defmodule SponsorlyWeb.UserRegistrationController do
     case Accounts.register_user(user_params) do
       {:ok, user} ->
         Accounts.deliver_user_confirmation_instructions(user, &Routes.user_confirmation_url(conn, :confirm, &1))
+        Sponsorly.Sponsorships.link_sponsorships_to_user(user)
 
         conn
         |> put_flash(:info, "User created successfully. Please confirm your email to log in.")
