@@ -1,5 +1,7 @@
 <h1>Listing Sponsorships</h1>
 
+
+<h2>Confirmed Sponsorships</h2>
 <table>
   <thead>
     <tr>
@@ -10,23 +12,84 @@
     </tr>
   </thead>
   <tbody>
-<%= for sponsorship <- @sponsorships do %>
-    <tr>
-      <td>
-        <span><%= link sponsorship.issue.newsletter.name, to: Routes.newsletter_path(@conn, :show, sponsorship.issue.newsletter) %></span>
-      </td>
-      <td>
-        <span><%= link issue_name(sponsorship.issue), to: Routes.newsletter_issue_path(@conn, :show, sponsorship.issue.newsletter, sponsorship.issue) %></span>
-      </td>
+    <%= for sponsorship <- @confirmed_sponsorships do %>
+      <tr>
+        <td>
+          <span><%= sponsorship.issue.newsletter.name %></span>
+        </td>
+        <td>
+          <span><%= issue_name(sponsorship.issue) %></span>
+        </td>
 
-      <td>
-        <span><%= link "Show", to: Routes.sponsorship_path(@conn, :show, sponsorship) %></span>
-        <span><%= link "Edit", to: Routes.sponsorship_path(@conn, :edit, sponsorship) %></span>
-        <span><%= link "Delete", to: Routes.sponsorship_path(@conn, :delete, sponsorship), method: :delete, data: [confirm: "Are you sure?"] %></span>
-      </td>
-    </tr>
-<% end %>
+        <td>
+          <span><%= link "Edit", to: Routes.sponsorship_path(@conn, :edit, sponsorship) %></span>
+        </td>
+      </tr>
+    <% end %>
   </tbody>
 </table>
 
-<span><%= link "New Sponsorship", to: Routes.sponsorship_path(@conn, :new) %></span>
+<h2>Pending Sponsorships</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Newsletter</th>
+      <th>Issue</th>
+
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <%= for sponsorship <- @pending_sponsorships do %>
+      <tr>
+        <td>
+          <span><%= sponsorship.issue.newsletter.name %></span>
+        </td>
+        <td>
+          <span><%= issue_name(sponsorship.issue) %></span>
+        </td>
+
+        <td>
+          <span><%= link "Edit", to: Routes.sponsorship_path(@conn, :edit, sponsorship) %></span>
+          <span><%= link "Delete", to: Routes.sponsorship_path(@conn, :delete, sponsorship), method: :delete, data: [confirm: "Are you sure?"] %></span>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<h2>Past Sponsorships</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Newsletter</th>
+      <th>Issue</th>
+      <th>Confirmed</th>
+
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <%= for sponsorship <- @past_sponsorships do %>
+      <tr>
+        <td>
+          <span><%= sponsorship.issue.newsletter.name %></span>
+        </td>
+        <td>
+          <span><%= issue_name(sponsorship.issue) %></span>
+        </td>
+        <td>
+          <%= if sponsorship.confirmed_sponsorship do %>
+            Yes
+          <% else %>
+            No
+          <% end %>
+        </td>
+
+        <td>
+          <span><%= link "Delete", to: Routes.sponsorship_path(@conn, :delete, sponsorship), method: :delete, data: [confirm: "Are you sure?"] %></span>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

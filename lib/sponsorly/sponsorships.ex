@@ -47,6 +47,51 @@ defmodule Sponsorly.Sponsorships do
     |> Repo.preload(issue: :newsletter)
   end
 
+  def list_confirmed_sponsorships(user_id) do
+    now = NaiveDateTime.utc_now()
+
+    q =
+      from s in Sponsorship,
+      left_join: i in assoc(s, :issue),
+      inner_join: cs in assoc(s, :confirmed_sponsorship),
+      where: s.user_id == ^user_id and
+             i.due_at > ^now,
+      order_by: [asc: i.due_at],
+      preload: [confirmed_sponsorship: cs, issue: {i, :newsletter}]
+
+    Repo.all(q)
+  end
+
+  def list_pending_sponsorships(user_id) do
+    now = NaiveDateTime.utc_now()
+
+    q =
+      from s in Sponsorship,
+      left_join: i in assoc(s, :issue),
+      left_join: cs in assoc(s, :confirmed_sponsorship),
+      where: s.user_id == ^user_id and
+             is_nil(cs.issue_id) and
+             i.due_at > ^now,
+      order_by: [asc: i.due_at],
+      preload: [issue: {i, :newsletter}]
+
+    Repo.all(q)
+  end
+
+  def list_past_sponsorships(user_id) do
+    now = NaiveDateTime.utc_now()
+
+    q =
+      from s in Sponsorship,
+      left_join: i in assoc(s, :issue),
+      where: s.user_id == ^user_id and
+             i.due_at <= ^now,
+      order_by: [desc: i.due_at],
+      preload: [:confirmed_sponsorship, issue: {i, :newsletter}]
+
+    Repo.all(q)
+  end
+
   @doc """
   Returns the list of sponsorships for an issue.
 

@@ -9,6 +9,7 @@ defmodule Sponsorly.Sponsorships.Sponsorship do
 
     belongs_to :user, Sponsorly.Accounts.User
     belongs_to :issue, Sponsorly.Newsletters.Issue
+    has_one :confirmed_sponsorship, Sponsorly.Sponsorships.ConfirmedSponsorship
 
     timestamps()
   end

@@ -3,17 +3,12 @@ defmodule SponsorlyWeb.SponsorshipController do
 
   alias Sponsorly.Newsletters
   alias Sponsorly.Sponsorships
-  alias Sponsorly.Sponsorships.Sponsorship
 
   def index(conn, _params) do
-    sponsorships = Sponsorships.list_sponsorships(conn.assigns.current_user.id)
-    render(conn, "index.html", sponsorships: sponsorships)
-  end
-
-  def new(conn, _params) do
-    changeset = Sponsorships.change_sponsorship(%Sponsorship{})
-    issues = Newsletters.list_issues()
-    render(conn, "new.html", changeset: changeset, issues: issues)
+    confirmed_sponsorships = Sponsorships.list_confirmed_sponsorships(conn.assigns.current_user.id)
+    pending_sponsorships = Sponsorships.list_pending_sponsorships(conn.assigns.current_user.id)
+    past_sponsorships = Sponsorships.list_past_sponsorships(conn.assigns.current_user.id)
+    render(conn, "index.html", confirmed_sponsorships: confirmed_sponsorships, pending_sponsorships: pending_sponsorships, past_sponsorships: past_sponsorships)
   end
 
   def create(%{assigns: %{current_user: nil}} = conn, %{"sponsorship" => sponsorship_params}) do
@@ -33,20 +28,15 @@ defmodule SponsorlyWeb.SponsorshipController do
     sponsorship_params = Map.put(sponsorship_params, "user_id", current_user.id)
 
     case Sponsorships.create_sponsorship(sponsorship_params) do
-      {:ok, sponsorship} ->
+      {:ok, _sponsorship} ->
         conn
         |> put_flash(:info, "Sponsorship created successfully.")
-        |> redirect(to: Routes.sponsorship_path(conn, :show, sponsorship))
+        |> redirect(to: Routes.sponsorship_path(conn, :index))
 
       {:error, %Ecto.Changeset{} = changeset} ->
         issues = Newsletters.list_issues()
         render(conn, "new.html", changeset: changeset, issues: issues)
     end
-  end
-
-  def show(conn, %{"id" => id}) do
-    sponsorship = Sponsorships.get_sponsorship!(conn.assigns.current_user.id, id)
-    render(conn, "show.html", sponsorship: sponsorship)
   end
 
   def edit(conn, %{"id" => id}) do
@@ -59,10 +49,10 @@ defmodule SponsorlyWeb.SponsorshipController do
     sponsorship = Sponsorships.get_sponsorship!(conn.assigns.current_user.id, id)
 
     case Sponsorships.update_sponsorship(sponsorship, sponsorship_params) do
-      {:ok, sponsorship} ->
+      {:ok, _sponsorship} ->
         conn
         |> put_flash(:info, "Sponsorship updated successfully.")
-        |> redirect(to: Routes.sponsorship_path(conn, :show, sponsorship))
+        |> redirect(to: Routes.sponsorship_path(conn, :index))
 
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "edit.html", sponsorship: sponsorship, changeset: changeset)

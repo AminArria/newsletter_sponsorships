@@ -34,7 +34,7 @@ defmodule SponsorlyWeb.Router do
       resources "/issues", IssueController
     end
 
-    resources "/sponsorships", SponsorshipController, except: [:new, :create]
+    resources "/sponsorships", SponsorshipController, except: [:new, :create, :show]
     resources "/confirmed_sponsorships", ConfirmedSponsorshipController, only: [:create, :delete, :edit, :update]
   end
 
