@@ -12,10 +12,12 @@
     <header>
       <%= render "_user_menu.html", assigns %>
     </header>
-    <main role="main" class="container">
-      <p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p>
-      <p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p>
-      <%= @inner_content %>
-    </main>
+    <section class="section">
+      <div class="container">
+        <%= flash get_flash(@conn, :info), :info %>
+        <%= flash get_flash(@conn, :error), :error %>
+        <%= @inner_content %>
+      </div>
+    </section>
   </body>
 </html>
