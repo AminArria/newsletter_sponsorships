@@ -42,7 +42,7 @@ defmodule Sponsorly.Newsletters.Newsletter do
     next_issue_at = get_change(changeset, :next_issue_at)
     interval_days = get_change(changeset, :interval_days)
     sponsor_in_days = get_change(changeset, :sponsor_in_days)
-    max_sponsor_at = DateTime.add(next_issue_at, sponsor_in_days * 24 * 60 * 60)
+    max_sponsor_at = DateTime.add(DateTime.utc_now(), sponsor_in_days * 24 * 60 * 60)
 
     issues_attrs = generate_issues(next_issue_at, max_sponsor_at, interval_days, [])
     put_change(changeset, :issues, issues_attrs)
