@@ -42,18 +42,18 @@ defmodule Sponsorly.Newsletters.Newsletter do
     next_issue = get_change(changeset, :next_issue)
     interval_days = get_change(changeset, :interval_days)
     sponsor_in_days = get_change(changeset, :sponsor_in_days)
-    max_sponsor_at = Date.add(Date.utc_today(), sponsor_in_days)
+    max_sponsor_date = Date.add(Date.utc_today(), sponsor_in_days)
 
-    issues_attrs = generate_issues(next_issue, max_sponsor_at, interval_days, [])
+    issues_attrs = generate_issues(next_issue, max_sponsor_date, interval_days, [])
     put_change(changeset, :issues, issues_attrs)
   end
 
-  def generate_issues(current_issue_at, max_sponsor_at, interval_days, issues_attrs) do
-    case Date.compare(max_sponsor_at, current_issue_at) do
+  def generate_issues(current_issue_date, max_sponsor_date, interval_days, issues_attrs) do
+    case Date.compare(max_sponsor_date, current_issue_date) do
       :gt ->
-        issue_attrs = %{due_at: DateTime.new!(current_issue_at, ~T[11:00:00])}
-        next_issue = Date.add(current_issue_at, interval_days)
-        generate_issues(next_issue, max_sponsor_at, interval_days, issues_attrs ++ [issue_attrs])
+        issue_attrs = %{due_date: current_issue_date}
+        next_issue = Date.add(current_issue_date, interval_days)
+        generate_issues(next_issue, max_sponsor_date, interval_days, issues_attrs ++ [issue_attrs])
 
       _ ->
         issues_attrs

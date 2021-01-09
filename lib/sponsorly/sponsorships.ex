@@ -56,8 +56,8 @@ defmodule Sponsorly.Sponsorships do
       left_join: i in assoc(s, :issue),
       inner_join: cs in assoc(s, :confirmed_sponsorship),
       where: s.user_id == ^user_id and
-             i.due_at > ^now,
-      order_by: [asc: i.due_at],
+             i.due_date > ^now,
+      order_by: [asc: i.due_date],
       preload: [confirmed_sponsorship: cs, issue: {i, :newsletter}]
 
     Repo.all(q)
@@ -72,8 +72,8 @@ defmodule Sponsorly.Sponsorships do
       left_join: cs in assoc(s, :confirmed_sponsorship),
       where: s.user_id == ^user_id and
              is_nil(cs.issue_id) and
-             i.due_at > ^now,
-      order_by: [asc: i.due_at],
+             i.due_date > ^now,
+      order_by: [asc: i.due_date],
       preload: [issue: {i, :newsletter}]
 
     Repo.all(q)
@@ -86,8 +86,8 @@ defmodule Sponsorly.Sponsorships do
       from s in Sponsorship,
       left_join: i in assoc(s, :issue),
       where: s.user_id == ^user_id and
-             i.due_at <= ^now,
-      order_by: [desc: i.due_at],
+             i.due_date <= ^now,
+      order_by: [desc: i.due_date],
       preload: [:confirmed_sponsorship, issue: {i, :newsletter}]
 
     Repo.all(q)

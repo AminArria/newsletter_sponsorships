@@ -30,13 +30,13 @@ defmodule Sponsorly.IssuesCreator do
 
   @impl true
   def handle_info(:create_issues, state) do
-    current_at = DateTime.utc_now()
+    current_date = Date.utc_today()
 
     q =
       from i in Issue,
       where: not i.deleted,
       distinct: i.newsletter_id,
-      order_by: [desc: i.due_at]
+      order_by: [desc: i.due_date]
 
     last_issues =
       Repo.all(q)
@@ -44,12 +44,12 @@ defmodule Sponsorly.IssuesCreator do
 
     new_issues =
       Enum.reduce(last_issues, [], fn issue, new_issues ->
-        next_issue_at = DateTime.add(issue.due_at, issue.newsletter.interval_days * 24 * 60 * 60)
-        max_sponsor_at = DateTime.add(current_at, issue.newsletter.sponsor_in_days * 24 * 60 * 60)
-        case DateTime.compare(max_sponsor_at, next_issue_at) do
+        next_issue_date = Date.add(issue.due_date, issue.newsletter.interval_days)
+        max_sponsor_date = Date.add(current_date, issue.newsletter.sponsor_in_days)
+        case Date.compare(max_sponsor_date, next_issue_date) do
           :gt ->
-            naive_current_at = DateTime.to_naive(current_at) |> NaiveDateTime.truncate(:second)
-            attrs = %{due_at: next_issue_at, newsletter_id: issue.newsletter_id, inserted_at: naive_current_at, updated_at: naive_current_at}
+            naive_current_at = NaiveDateTime.new(current_date, Time.utc_now())
+            attrs = %{due_date: next_issue_date, newsletter_id: issue.newsletter_id, inserted_at: naive_current_at, updated_at: naive_current_at}
             [attrs | new_issues]
 
           _ ->

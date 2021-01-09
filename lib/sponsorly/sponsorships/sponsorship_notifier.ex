@@ -53,9 +53,7 @@ defmodule Sponsorly.Sponsorships.SponsorshipNotifier do
   end
 
   defp issue_name(%{name: nil} = issue) do
-    issue.due_at
-    |> DateTime.to_date()
-    |> to_string()
+    issue.due_date
   end
 
   defp issue_name(issue) do
