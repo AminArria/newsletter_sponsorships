@@ -205,6 +205,50 @@ defmodule Sponsorly.Newsletters do
     Repo.all(q)
   end
 
+  def list_confirmed_issues(newsletter_id) do
+    now = DateTime.utc_now()
+
+    q =
+      from i in Issue,
+      inner_join: sc in assoc(i, :confirmed_sponsorship),
+      where: i.newsletter_id == ^newsletter_id and
+             i.due_at > ^now and
+             not i.deleted,
+      preload: [confirmed_sponsorship: sc]
+
+    Repo.all(q)
+  end
+
+  def list_pending_issues(newsletter_id) do
+    now = DateTime.utc_now()
+
+    q =
+      from i in Issue,
+      left_join: sc in assoc(i, :confirmed_sponsorship),
+      left_join: s in assoc(i, :sponsorships),
+      where: i.newsletter_id == ^newsletter_id and
+             is_nil(sc) and
+             i.due_at > ^now and
+             not i.deleted,
+      preload: [sponsorships: s]
+
+    Repo.all(q)
+  end
+
+  def list_past_issues(newsletter_id) do
+    now = DateTime.utc_now() |> DateTime.add(6_000_000)
+
+    q =
+      from i in Issue,
+      left_join: sc in assoc(i, :confirmed_sponsorship),
+      where: i.newsletter_id == ^newsletter_id and
+             i.due_at <= ^now and
+             not i.deleted,
+      preload: [confirmed_sponsorship: sc]
+
+    Repo.all(q)
+  end
+
   @doc """
   Returns the list of issues of a user slug and newsletter slug.
 

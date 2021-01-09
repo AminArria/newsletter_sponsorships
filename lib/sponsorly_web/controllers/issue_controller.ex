@@ -8,8 +8,10 @@ defmodule SponsorlyWeb.IssueController do
   plug :fetch_newsletter when action not in [:slug_index]
 
   def index(conn, _params) do
-    issues = Newsletters.list_issues(conn.assigns.newsletter.id)
-    render(conn, "index.html", issues: issues)
+    confirmed_issues = Newsletters.list_confirmed_issues(conn.assigns.newsletter.id)
+    pending_issues = Newsletters.list_pending_issues(conn.assigns.newsletter.id)
+    past_issues = Newsletters.list_past_issues(conn.assigns.newsletter.id)
+    render(conn, "index.html", confirmed_issues: confirmed_issues, pending_issues: pending_issues, past_issues: past_issues)
   end
 
   def new(conn, _params) do
