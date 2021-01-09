@@ -1,37 +1,44 @@
-<h1>Listing Newsletters</h1>
+<div class="columns is-desktop">
+  <div class="column">
+    <h1 class="title has-text-centered">Your Newsletters</h1>
 
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Interval days</th>
-      <th>Sponsor before days</th>
-      <th>Sponsor in days</th>
+    <div class="columns">
+      <div class="column">
+        <%= link "+ New Newsletter", to: Routes.newsletter_path(@conn, :new), class: "button is-primary" %>
+      </div>
+    </div>
 
-      <th></th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-<%= for newsletter <- @newsletters do %>
-    <tr>
-      <td><%= newsletter.name %></td>
-      <td><%= newsletter.interval_days %></td>
-      <td><%= newsletter.sponsor_before_days %></td>
-      <td><%= newsletter.sponsor_in_days %></td>
+    <%= if @newsletters == [] do %>
+      <p class="has-text-centered">
+        You haven't created any newsletter. Create your first one by visiting this
+        <%= link "link", to: Routes.newsletter_path(@conn, :new) %>
+      </p>
+    <% else %>
+      <div class="columns is-multiline">
+        <%= for newsletter <- @newsletters do %>
+          <div class="column is-3">
+            <div class="card">
+                  <%= link to: Routes.newsletter_path(@conn, :show, newsletter), class: "is-capitalized has-text-weight-bold" do %>
+              <div class="card-header">
+                    <div class="card-header-title">
+                      <%= newsletter.name %>
+                    </div>
+              </div>
+                  <% end %>
 
-      <td>
-        <span><%= link "Issues", to: Routes.newsletter_issue_path(@conn, :index, newsletter) %></span>
-      </td>
+              <div class="card-footer">
+                <p class="card-footer-item">
+                  <%= link "/#{newsletter.slug}", to: Routes.issue_path(@conn, :slug_index, @current_user.slug, newsletter.slug) %>
+                </p>
 
-      <td>
-        <span><%= link "Show", to: Routes.newsletter_path(@conn, :show, newsletter) %></span>
-        <span><%= link "Edit", to: Routes.newsletter_path(@conn, :edit, newsletter) %></span>
-        <span><%= link "Delete", to: Routes.newsletter_path(@conn, :delete, newsletter), method: :delete, data: [confirm: "Are you sure?"] %></span>
-      </td>
-    </tr>
-<% end %>
-  </tbody>
-</table>
-
-<span><%= link "New Newsletter", to: Routes.newsletter_path(@conn, :new) %></span>
+                <p class="card-footer-item">
+                  <%= link "Issues", to: Routes.newsletter_issue_path(@conn, :index, newsletter) %>
+                </p>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>

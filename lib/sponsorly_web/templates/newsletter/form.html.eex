@@ -1,35 +1,47 @@
 <%= form_for @changeset, @action, fn f -> %>
   <%= if @changeset.action do %>
-    <div class="alert alert-danger">
-      <p>Oops, something went wrong! Please check the errors below.</p>
+    <%= error_alert() %>
+  <% end %>
+
+  <%= text_control f, :name, "Name", true %>
+
+  <div class="field">
+    <%= label f, :slug, "URL", class: "label" %>
+
+    <div class="field has-addons">
+      <div class="control">
+        <a class="button is-static">/<%= @current_user.slug %>/</a>
+      </div>
+
+      <div class="control is-expanded">
+        <%= text_input f, :slug, class: "input", placeholder: "your-url", required: true %>
+      </div>
+    </div>
+      <%= error_tag f, :slug %>
+  </div>
+
+  <%= text_control f, :interval_days, "Publishing interval (days)", true %>
+  <%= text_control f, :sponsor_before_days, "How many days before publishing can an issue be sponsored?", true %>
+  <%= text_control f, :sponsor_in_days, "Up to how many days in advanced can issues to be sponsored?", true %>
+
+  <%= unless assigns[:newsletter] do %>
+    <div class="field">
+      <%= label f, :next_issue, class: "label" %>
+      <div class="control">
+        <%= date_input f, :next_issue, required: true, class: "input" %>
+      </div>
+      <%= error_tag f, :next_issue %>
     </div>
   <% end %>
 
-  <%= label f, :name %>
-  <%= text_input f, :name %>
-  <%= error_tag f, :name %>
-
-  <%= label f, :slug %>
-  <%= text_input f, :slug %>
-  <%= error_tag f, :slug %>
-
-  <%= label f, :next_issue_at %>
-  <%= datetime_select f, :next_issue_at %>
-  <%= error_tag f, :next_issue_at %>
-
-  <%= label f, :interval_days %>
-  <%= number_input f, :interval_days %>
-  <%= error_tag f, :interval_days %>
-
-  <%= label f, :sponsor_before_days %>
-  <%= number_input f, :sponsor_before_days %>
-  <%= error_tag f, :sponsor_before_days %>
-
-  <%= label f, :sponsor_in_days %>
-  <%= number_input f, :sponsor_in_days %>
-  <%= error_tag f, :sponsor_in_days %>
-
-  <div>
-    <%= submit "Save" %>
+  <div class="buttons">
+    <%= submit "Save", class: "button is-primary" %>
+    <%= link "Back", to: @back, class: "button" %>
   </div>
+
+  <%= if assigns[:newsletter] do %>
+    <div class="buttons">
+      <%= link "Delete", to: Routes.newsletter_path(@conn, :delete, @newsletter), method: :delete, class: "button is-danger", data: [confirm: "Are you sure you want to delete this newsletter?"] %>
+    </div>
+  <% end %>
 <% end %>

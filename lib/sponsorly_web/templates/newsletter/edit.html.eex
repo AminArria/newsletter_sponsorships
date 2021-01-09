@@ -1,5 +1,7 @@
-<h1>Edit Newsletter</h1>
+<div class="columns is-desktop is-centered">
+  <div class="column is-4">
+    <h1 class="title has-text-centered">Edit Newsletter</h1>
 
-<%= render "form.html", Map.put(assigns, :action, Routes.newsletter_path(@conn, :update, @newsletter)) %>
-
-<span><%= link "Back", to: Routes.newsletter_path(@conn, :index) %></span>
+    <%= render "form.html", Map.merge(assigns, %{action: Routes.newsletter_path(@conn, :update, @newsletter), back: Routes.newsletter_path(@conn, :show, @newsletter)}) %>
+  </div>
+</div>

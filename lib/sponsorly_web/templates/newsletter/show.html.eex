@@ -1,33 +1,37 @@
-<h1>Show Newsletter</h1>
+<div class="columns is-desktop is-centered">
+  <div class="column is-4">
 
-<ul>
+    <h1 class="title has-text-centered"><%= @newsletter.name%></h1>
 
-  <li>
-    <strong>Name:</strong>
-    <%= @newsletter.name %>
-  </li>
+    <div class="buttons">
+      <%= link "Back", to: Routes.newsletter_path(@conn, :index), class: "button" %>
+      <%= link "Edit", to: Routes.newsletter_path(@conn, :edit, @newsletter), class: "button is-primary" %>
+    </div>
 
-  <li>
-    <strong>Slug:</strong>
-    <%= @newsletter.slug %>
-  </li>
+    <ul>
+      <li>
+        <strong>URL:</strong>
+        <%= link "/#{@newsletter.slug}", to: Routes.issue_path(@conn, :slug_index, @current_user.slug, @newsletter.slug) %>
+      </li>
 
-  <li>
-    <strong>Interval days:</strong>
-    <%= @newsletter.interval_days %>
-  </li>
+      <li>
+        <strong>Publishing interval:</strong>
+        <%= @newsletter.interval_days %>&nbsp;days
+      </li>
 
-  <li>
-    <strong>Sponsor before days:</strong>
-    <%= @newsletter.sponsor_before_days %>
-  </li>
+      <li>
+        <strong>Can sponsor before publishing:</strong>
+        <%= @newsletter.sponsor_before_days %>&nbsp;days
+      </li>
 
-  <li>
-    <strong>Sponsor in days:</strong>
-    <%= @newsletter.sponsor_in_days %>
-  </li>
+      <li>
+        <strong>Can sponsor in advanced:</strong>
+        <%= @newsletter.sponsor_in_days %>&nbsp;days
+      </li>
 
-</ul>
-
-<span><%= link "Edit", to: Routes.newsletter_path(@conn, :edit, @newsletter) %></span>
-<span><%= link "Back", to: Routes.newsletter_path(@conn, :index) %></span>
+      <li>
+        <%= link "Go to issues", to: Routes.newsletter_issue_path(@conn, :index, @newsletter), class: "button is-text" %>
+      </li>
+    </ul>
+  </div>
+</div>
