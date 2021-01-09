@@ -18,13 +18,13 @@
         <%= for newsletter <- @newsletters do %>
           <div class="column is-3">
             <div class="card">
-                  <%= link to: Routes.newsletter_path(@conn, :show, newsletter), class: "is-capitalized has-text-weight-bold" do %>
-              <div class="card-header">
-                    <div class="card-header-title">
-                      <%= newsletter.name %>
-                    </div>
-              </div>
-                  <% end %>
+              <%= link to: Routes.newsletter_path(@conn, :show, newsletter), class: "is-capitalized has-text-weight-bold" do %>
+                <div class="card-header">
+                  <div class="card-header-title">
+                    <%= newsletter.name %>
+                  </div>
+                </div>
+              <% end %>
 
               <div class="card-footer">
                 <p class="card-footer-item">

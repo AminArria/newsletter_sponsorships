@@ -20,6 +20,8 @@ defmodule SponsorlyWeb.IssueController do
   end
 
   def create(conn, %{"issue" => issue_params}) do
+    issue_params = Map.put(issue_params, "newsletter_id", conn.assigns.newsletter.id)
+
     case Newsletters.create_issue(issue_params) do
       {:ok, issue} ->
         conn
@@ -34,7 +36,7 @@ defmodule SponsorlyWeb.IssueController do
   def show(conn, %{"id" => id}) do
     issue =
       Newsletters.get_issue!(conn.assigns.newsletter.id, id)
-      |> Sponsorly.Repo.preload(sponsorships: :user, confirmed_sponsorship: [sponsorship: :user])
+      |> Sponsorly.Repo.preload(confirmed_sponsorship: [sponsorship: :user])
 
     sponsorships = Sponsorships.list_sponsorships_for_issue(issue.id)
     render(conn, "show.html", issue: issue, sponsorships: sponsorships)

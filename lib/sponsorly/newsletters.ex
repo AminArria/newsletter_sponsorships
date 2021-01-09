@@ -200,7 +200,8 @@ defmodule Sponsorly.Newsletters do
     q =
       from i in Issue,
       where: i.newsletter_id == ^newsletter_id and
-             not i.deleted
+             not i.deleted,
+      order_by: [asc: i.due_date, desc: i.inserted_at]
 
     Repo.all(q)
   end
@@ -214,6 +215,7 @@ defmodule Sponsorly.Newsletters do
       where: i.newsletter_id == ^newsletter_id and
              i.due_date > ^now and
              not i.deleted,
+      order_by: [asc: i.due_date, desc: i.inserted_at],
       preload: [confirmed_sponsorship: sc]
 
     Repo.all(q)
@@ -230,13 +232,14 @@ defmodule Sponsorly.Newsletters do
              is_nil(sc) and
              i.due_date > ^now and
              not i.deleted,
+      order_by: [asc: i.due_date, desc: i.inserted_at],
       preload: [sponsorships: s]
 
     Repo.all(q)
   end
 
   def list_past_issues(newsletter_id) do
-    now = DateTime.utc_now() |> DateTime.add(6_000_000)
+    now = DateTime.utc_now()
 
     q =
       from i in Issue,
@@ -244,6 +247,7 @@ defmodule Sponsorly.Newsletters do
       where: i.newsletter_id == ^newsletter_id and
              i.due_date <= ^now and
              not i.deleted,
+      order_by: [asc: i.due_date, desc: i.inserted_at],
       preload: [confirmed_sponsorship: sc]
 
     Repo.all(q)

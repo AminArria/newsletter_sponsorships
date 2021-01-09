@@ -29,4 +29,24 @@ document.addEventListener('DOMContentLoaded', () => {
       $notification.parentNode.removeChild($notification);
     });
   });
+
+  let tabs = (document.querySelectorAll('.tabs li') || [])
+  let tabs_targets = (document.querySelectorAll('.tab-target') || [])
+  tabs.forEach((tab) => {
+    let target = document.getElementById(tab.dataset.target);
+
+    tab.addEventListener('click', () => {
+      if (tab.classList.contains('is-active')) return;
+
+      tabs.forEach(toggle_tab => {
+        toggle_tab.classList.remove('is-active');
+        tab.classList.add('is-active');
+      })
+
+      tabs_targets.forEach(toggle_target => {
+        toggle_target.classList.add('is-hidden');
+        target.classList.remove('is-hidden');
+      })
+    })
+  });
 });

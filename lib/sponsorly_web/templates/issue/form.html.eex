@@ -1,19 +1,24 @@
 <%= form_for @changeset, @action, fn f -> %>
-  <%= if @changeset.action do %>
-    <div class="alert alert-danger">
-      <p>Oops, something went wrong! Please check the errors below.</p>
+  <%= error_alert(@changeset) %>
+
+  <%= text_control f, :name, "Nombre", false %>
+
+  <div class="field">
+    <%= label f, :due_date, class: "label" %>
+    <div class="control">
+      <%= date_input f, :due_date, required: true, class: "input" %>
+    </div>
+    <%= error_tag f, :due_date %>
+  </div>
+
+  <div class="buttons">
+    <%= submit "Save", class: "button is-primary" %>
+    <%= link "Back", to: @back, class: "button" %>
+  </div>
+
+  <%= if assigns[:issue] do %>
+    <div class="buttons">
+      <%= link "Delete", to: Routes.newsletter_issue_path(@conn, :delete, @newsletter, @issue), method: :delete, class: "button is-danger", data: [confirm: "Are you sure you want to delete this issue?"] %>
     </div>
   <% end %>
-
-  <%= label f, :name %>
-  <%= text_input f, :name %>
-  <%= error_tag f, :name %>
-
-  <%= label f, :due_at %>
-  <%= datetime_select f, :due_at %>
-  <%= error_tag f, :due_at %>
-
-  <div>
-    <%= submit "Save" %>
-  </div>
 <% end %>

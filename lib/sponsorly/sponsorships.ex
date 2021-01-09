@@ -105,8 +105,9 @@ defmodule Sponsorly.Sponsorships do
   def list_sponsorships_for_issue(issue_id) do
     q =
       from s in Sponsorship,
-      where: s.issue_id == ^issue_id and
-             not s.deleted
+        where: s.issue_id == ^issue_id and
+               not s.deleted,
+        order_by: [desc: :inserted_at]
 
     Repo.all(q)
     |> Repo.preload(:user)

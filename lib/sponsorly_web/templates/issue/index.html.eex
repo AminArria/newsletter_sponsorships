@@ -1,29 +1,76 @@
-<h1>Newsletter <%= @newsletter.name %></h1>
-<h2>Listing Issues</h2>
+<div class="columns is-desktop is-centered">
+  <div class="column is-4">
+    <h1 class="title has-text-centered">Issues for <%= link @newsletter.name, to: Routes.newsletter_path(@conn, :show, @newsletter), class: "is-capitalized" %></h1>
 
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Due at</th>
+    <%= link "+ New Issue", to: Routes.newsletter_issue_path(@conn, :new, @newsletter), class: "button is-primary" %>
 
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-<%= for issue <- @issues do %>
-    <tr>
-      <td><%= issue.name %></td>
-      <td><%= issue.due_at %></td>
+    <div class="tabs is-centered is-fullwidth is-toggle mt-5">
+      <ul>
+        <li class="<%= if_confirmed(@confirmed_issues, "is-active") %>" data-target="confirmedIssues"><a>Confirmed</a></li>
+        <li class="<%= if_pending(@confirmed_issues, "is-active") %>" data-target="pendingIssues"><a>Pending</a></li>
+        <li data-target="pastIssues"><a >Past</a></li>
+      </ul>
+    </div>
 
-      <td>
-        <span><%= link "Show", to: Routes.newsletter_issue_path(@conn, :show, @newsletter, issue) %></span>
-        <span><%= link "Edit", to: Routes.newsletter_issue_path(@conn, :edit, @newsletter, issue) %></span>
-        <span><%= link "Delete", to: Routes.newsletter_issue_path(@conn, :delete, @newsletter, issue), method: :delete, data: [confirm: "Are you sure?"] %></span>
-      </td>
-    </tr>
-<% end %>
-  </tbody>
-</table>
+    <div id="confirmedIssues" class="tab-target is-flex is-justify-content-center <%= if_pending(@confirmed_issues, "is-hidden") %>">
+      <table class="table mt-5 is-align-self-center">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Due</th>
+          </tr>
+        </thead>
+        <tbody>
+          <%= for issue <- @confirmed_issues do %>
+            <tr>
+              <td><%= issue.name %></td>
+              <td><%= link issue.due_date, to: Routes.newsletter_issue_path(@conn, :show, @newsletter, issue) %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
 
-<span><%= link "New Issue", to: Routes.newsletter_issue_path(@conn, :new, @newsletter) %></span>
+    <div id="pendingIssues" class="tab-target is-flex is-justify-content-center <%= if_confirmed(@confirmed_issues, "is-hidden") %>">
+      <table class="table mt-5 is-align-self-center">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Due</th>
+            <th>Pending sponsorships</th>
+          </tr>
+        </thead>
+        <tbody>
+          <%= for issue <- @pending_issues do %>
+            <tr>
+              <td><%= issue.name %></td>
+              <td><%= link issue.due_date, to: Routes.newsletter_issue_path(@conn, :show, @newsletter, issue) %></td>
+              <td><%= length(issue.sponsorships) %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <div id="pastIssues" class="tab-target is-hidden is-flex is-justify-content-center">
+      <table class="table mt-5 is-align-self-center">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Due</th>
+            <th>Sponsored</th>
+          </tr>
+        </thead>
+        <tbody>
+          <%= for issue <- @past_issues do %>
+            <tr>
+              <td><%= issue.name %></td>
+              <td><%= link issue.due_date, to: Routes.newsletter_issue_path(@conn, :show, @newsletter, issue) %></td>
+              <td><%= if issue.confirmed_sponsorship, do: "Yes", else: "No" %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

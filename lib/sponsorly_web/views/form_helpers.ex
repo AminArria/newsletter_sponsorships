@@ -15,6 +15,15 @@ defmodule SponsorlyWeb.FormHelpers do
     """
   end
 
+  def error_alert(%Ecto.Changeset{action: nil}) do
+    nil
+  end
+
+  def error_alert(%Ecto.Changeset{} = c) do
+    IO.inspect(c)
+    error_alert()
+  end
+
   def text_control(form, field, name, required) do
     has_error = if Keyword.has_key?(form.errors, field), do: "is-danger"
 
