@@ -32,7 +32,7 @@ defmodule SponsorlyWeb.UserConfirmationController do
       {:ok, _} ->
         conn
         |> put_flash(:info, "Account confirmed successfully.")
-        |> redirect(to: "/")
+        |> redirect(to: Routes.user_session_path(conn, :new))
 
       :error ->
         # If there is a current user and the account was already confirmed,
@@ -46,7 +46,7 @@ defmodule SponsorlyWeb.UserConfirmationController do
           %{} ->
             conn
             |> put_flash(:error, "Account confirmation link is invalid or it has expired.")
-            |> redirect(to: "/")
+            |> redirect(to: Routes.user_confirmation_path(conn, :new))
         end
     end
   end

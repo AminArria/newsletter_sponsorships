@@ -2,7 +2,6 @@ defmodule SponsorlyWeb.ConfirmedSponsorshipController do
   use SponsorlyWeb, :controller
 
   alias Sponsorly.Sponsorships
-  alias Sponsorly.Sponsorships.ConfirmedSponsorship
 
   def create(conn, %{"confirmed_sponsorship" => %{"issue_id" => issue_id, "sponsorship_id" => sponsorship_id}}) do
     sponsorship = Sponsorships.get_sponsorship_for_issue!(issue_id, sponsorship_id)

@@ -221,8 +221,10 @@ defmodule Sponsorly.Newsletters do
       from i in Issue,
       join: n in assoc(i, :newsletter),
       join: u in assoc(n, :user),
+      left_join: cs in assoc(i, :confirmed_sponsorship),
       where: u.slug == ^user_slug and
              n.slug == ^newsletter_slug and
+             is_nil(cs) and
              i.due_at > ^now and
              not i.deleted,
       order_by: [asc: i.due_at]

@@ -22,7 +22,7 @@
   <ul>
     <li>
       <strong>User email:</strong>
-      <%= @issue.confirmed_sponsorship.user.email %>
+      <%= SponsorlyWeb.SponsorshipView.sponsorship_email(@issue.confirmed_sponsorship) %>
     </li>
     <li>
       <strong>Copy:</strong>
@@ -39,7 +39,7 @@
     <%= for sponsorship <- @issue.sponsorships do %>
       <li>
         <strong>User email:</strong>
-        <%= sponsorship.user.email %>
+        <%= SponsorlyWeb.SponsorshipView.sponsorship_email(sponsorship) %>
       </li>
       <li>
         <strong>Copy:</strong>
