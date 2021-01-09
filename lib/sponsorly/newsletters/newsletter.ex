@@ -10,7 +10,7 @@ defmodule Sponsorly.Newsletters.Newsletter do
     field :sponsor_before_days, :integer
     field :sponsor_in_days, :integer
 
-    field :next_issue_at, :utc_datetime, virtual: true
+    field :next_issue, :date, virtual: true
 
     belongs_to :user, Sponsorly.Accounts.User
     has_many :issues, Sponsorly.Newsletters.Issue
@@ -21,39 +21,39 @@ defmodule Sponsorly.Newsletters.Newsletter do
   @doc false
   def create_changeset(newsletter, attrs) do
     newsletter
-    |> cast(attrs, [:name, :interval_days, :next_issue_at, :slug, :sponsor_before_days, :sponsor_in_days, :user_id])
-    |> validate_required([:name, :interval_days, :next_issue_at, :slug, :sponsor_before_days, :sponsor_in_days, :user_id])
+    |> cast(attrs, [:name, :interval_days, :next_issue, :slug, :sponsor_before_days, :sponsor_in_days, :user_id])
+    |> validate_required([:name, :interval_days, :next_issue, :slug, :sponsor_before_days, :sponsor_in_days, :user_id])
     |> common_validations()
     |> validate_next_issue()
     |> prepare_changes(&generate_issues/1)
   end
 
   defp validate_next_issue(changeset) do
-    with next_issue_at when not is_nil(next_issue_at) <- get_change(changeset, :next_issue_at),
-         :gt <- DateTime.compare(next_issue_at, DateTime.utc_now()) do
+    with next_issue when not is_nil(next_issue) <- get_change(changeset, :next_issue),
+         :gt <- Date.compare(next_issue, Date.utc_today()) do
       changeset
     else
       _ ->
-        add_error(changeset, :next_issue_at, "must be after today")
+        add_error(changeset, :next_issue, "must be after today")
     end
   end
 
   defp generate_issues(changeset) do
-    next_issue_at = get_change(changeset, :next_issue_at)
+    next_issue = get_change(changeset, :next_issue)
     interval_days = get_change(changeset, :interval_days)
     sponsor_in_days = get_change(changeset, :sponsor_in_days)
-    max_sponsor_at = DateTime.add(DateTime.utc_now(), sponsor_in_days * 24 * 60 * 60)
+    max_sponsor_at = Date.add(Date.utc_today(), sponsor_in_days)
 
-    issues_attrs = generate_issues(next_issue_at, max_sponsor_at, interval_days, [])
+    issues_attrs = generate_issues(next_issue, max_sponsor_at, interval_days, [])
     put_change(changeset, :issues, issues_attrs)
   end
 
   def generate_issues(current_issue_at, max_sponsor_at, interval_days, issues_attrs) do
-    case DateTime.compare(max_sponsor_at, current_issue_at) do
+    case Date.compare(max_sponsor_at, current_issue_at) do
       :gt ->
-        issue_attrs = %{due_at: current_issue_at}
-        next_issue_at = DateTime.add(current_issue_at, interval_days * 24 * 60 * 60)
-        generate_issues(next_issue_at, max_sponsor_at, interval_days, issues_attrs ++ [issue_attrs])
+        issue_attrs = %{due_at: DateTime.new!(current_issue_at, ~T[11:00:00])}
+        next_issue = Date.add(current_issue_at, interval_days)
+        generate_issues(next_issue, max_sponsor_at, interval_days, issues_attrs ++ [issue_attrs])
 
       _ ->
         issues_attrs
