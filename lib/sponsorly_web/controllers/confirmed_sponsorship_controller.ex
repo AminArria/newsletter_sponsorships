@@ -8,11 +8,11 @@ defmodule SponsorlyWeb.ConfirmedSponsorshipController do
     confirmed_sponsorship_params = %{
       copy: sponsorship.copy,
       sponsorship_id: sponsorship.id,
-      issue_id: sponsorship.issue_id,
-      user_id: sponsorship.user_id
+      issue_id: sponsorship.issue_id
     }
 
     {:ok, _confirmed_sponsorship} = Sponsorships.create_confirmed_sponsorship(confirmed_sponsorship_params)
+    Sponsorships.deliver_confirmed_sponsorship(sponsorship)
 
     conn
     |> put_flash(:info, "Sponsorship confirmed successfully.")

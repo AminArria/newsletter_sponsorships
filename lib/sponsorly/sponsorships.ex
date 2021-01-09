@@ -7,6 +7,7 @@ defmodule Sponsorly.Sponsorships do
   alias Sponsorly.Repo
   alias Sponsorly.Sponsorships.Sponsorship
   alias Sponsorly.Sponsorships.ConfirmedSponsorship
+  alias Sponsorly.Sponsorships.SponsorshipNotifier
 
   @doc """
   Link existing sponsorships from an email to user (owner of that email).
@@ -341,5 +342,22 @@ defmodule Sponsorly.Sponsorships do
   """
   def change_confirmed_sponsorship(%ConfirmedSponsorship{} = confirmed_sponsorship, attrs \\ %{}) do
     ConfirmedSponsorship.update_changeset(confirmed_sponsorship, attrs)
+  end
+
+  @doc """
+  Delivers the notification about a confirmed sponsorship
+  """
+  def deliver_confirmed_sponsorship(sponsorship) do
+    sponsorship = Repo.preload(sponsorship, [:user, issue: :newsletter])
+    email = sponsorship_email(sponsorship)
+    SponsorshipNotifier.deliver_sponsorship_confirmation(email, sponsorship)
+  end
+
+  defp sponsorship_email(%{user: nil, email: email}) do
+    email
+  end
+
+  defp sponsorship_email(%{user: user}) do
+    user.email
   end
 end
