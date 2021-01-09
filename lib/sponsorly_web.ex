@@ -67,6 +67,7 @@ defmodule SponsorlyWeb do
       import Phoenix.View
 
       import SponsorlyWeb.ErrorHelpers
+      import SponsorlyWeb.FormHelpers
       import SponsorlyWeb.Gettext
       alias SponsorlyWeb.Router.Helpers, as: Routes
     end

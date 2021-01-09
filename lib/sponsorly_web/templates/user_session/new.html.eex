@@ -1,27 +1,30 @@
-<h1>Log in</h1>
+<div class="columns is-desktop is-centered">
+  <div class="column is-4">
+    <h1 class="title has-text-centered">Log In</h1>
 
-<%= form_for @conn, Routes.user_session_path(@conn, :create), [as: :user], fn f -> %>
-  <%= if @error_message do %>
-    <div class="alert alert-danger">
-      <p><%= @error_message %></p>
-    </div>
-  <% end %>
+    <%= form_for @conn, Routes.user_session_path(@conn, :create), [as: :user], fn f -> %>
+      <%= if @error_message do %>
+        <%= error_alert() %>
+      <% end %>
 
-  <%= label f, :email %>
-  <%= email_input f, :email, required: true %>
+      <%= text_control f, :email, "Email", true %>
+      <%= text_control f, :password, "Password", true %>
 
-  <%= label f, :password %>
-  <%= password_input f, :password, required: true %>
+      <div class="field">
+        <%= label f, :remember_me, "Keep me logged in for 60 days" %>
+        <%= checkbox f, :remember_me %>
+      </div>
 
-  <%= label f, :remember_me, "Keep me logged in for 60 days" %>
-  <%= checkbox f, :remember_me %>
+      <div class="field">
+        <%= submit "Log in", class: "button is-primary " %>
+        <%= link "Forgot your password?", to: Routes.user_reset_password_path(@conn, :new), class: "button" %>
+      </div>
 
-  <div>
-    <%= submit "Log in" %>
+      <div class="field">
+        <div class="buttons">
+          <%= link "Register", to: Routes.user_registration_path(@conn, :new), class: "button is-info" %>
+        </div>
+      </div>
+    <% end %>
   </div>
-<% end %>
-
-<p>
-  <%= link "Register", to: Routes.user_registration_path(@conn, :new) %> |
-  <%= link "Forgot your password?", to: Routes.user_reset_password_path(@conn, :new) %>
-</p>
+</div>

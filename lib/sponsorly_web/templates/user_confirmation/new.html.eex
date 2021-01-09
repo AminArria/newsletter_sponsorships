@@ -1,15 +1,20 @@
-<h1>Resend confirmation instructions</h1>
+<div class="columns is-desktop is-centered">
+  <div class="column is-4">
+    <h1 class="title has-text-centered">Resend Confirmation Instructions</h1>
 
-<%= form_for :user, Routes.user_confirmation_path(@conn, :create), fn f -> %>
-  <%= label f, :email %>
-  <%= email_input f, :email, required: true %>
+    <%= form_for :user, Routes.user_confirmation_path(@conn, :create), fn f -> %>
+      <%= text_control f, :email, "Email", true %>
 
-  <div>
-    <%= submit "Resend confirmation instructions" %>
+      <div class="field">
+        <%= submit "Resend", class: "button is-primary" %>
+      </div>
+
+      <div class="field">
+        <div class="buttons">
+          <%= link "Register", to: Routes.user_registration_path(@conn, :new), class: "button" %>
+          <%= link "Log in", to: Routes.user_session_path(@conn, :new), class: "button is-info " %>
+        </div>
+      </div>
+    <% end %>
   </div>
-<% end %>
-
-<p>
-  <%= link "Register", to: Routes.user_registration_path(@conn, :new) %> |
-  <%= link "Log in", to: Routes.user_session_path(@conn, :new) %>
-</p>
+</div>
