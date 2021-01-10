@@ -48,7 +48,7 @@ defmodule Sponsorly.Newsletters.Newsletter do
       false ->
         add_error(changeset, :next_issue, "is not in one of the days you publish")
 
-      cmp when cmp in [:lt, :eq] ->
+      _lt_eq ->
         add_error(changeset, :next_issue, "must be after today")
     end
   end
