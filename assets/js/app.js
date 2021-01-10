@@ -15,3 +15,17 @@ import "../css/app.scss"
 import "phoenix_html"
 
 import './bulma'
+
+
+document.addEventListener('DOMContentLoaded', () => {
+  // When creating a sponsorship sets the value of the issue_id selector
+  (document.querySelectorAll('.modal-trigger[data-target="sponsor-form"]') || []).forEach(modalTrigger => {
+    let target = document.getElementById(modalTrigger.dataset.target);
+    let select = target.querySelector("select");
+    let issueId = modalTrigger.dataset.issue;
+
+    modalTrigger.addEventListener('click', () => {
+      select.value = issueId;
+    })
+  });
+});

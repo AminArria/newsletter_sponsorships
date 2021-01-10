@@ -1,23 +1,27 @@
-<h1>Listing Newsletters</h1>
+<div class="columns is-desktop">
+  <div class="column">
+    <h1 class="title has-text-centered">Newsletters</h1>
 
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Interval days</th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-<%= for newsletter <- @newsletters do %>
-    <tr>
-      <td><%= newsletter.name %></td>
-      <td><%= newsletter.interval_days %></td>
-
-      <td>
-        <span><%= link "Issues", to: Routes.issue_path(@conn, :slug_index, @user_slug, newsletter.slug) %></span>
-      </td>
-    </tr>
-<% end %>
-  </tbody>
-</table>
+    <%= if @newsletters == [] do %>
+      <p class="has-text-centered">
+        This user has no newsletters.
+      </p>
+    <% else %>
+      <div class="columns is-multiline">
+        <%= for newsletter <- @newsletters do %>
+          <div class="column is-3">
+            <div class="card">
+              <%= link to: Routes.issue_path(@conn, :slug_index, @user_slug, newsletter.slug), class: "is-capitalized has-text-weight-bold" do %>
+                <div class="card-header">
+                  <div class="card-header-title">
+                    <%= newsletter.name %>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>

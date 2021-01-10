@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
     })
 
     target.addEventListener('click', e => {
-      if (e.target.classList.contains('modal-background') || e.target.classList.contains('modal-close')) {
+      if (e.target.classList.contains('modal-background') || e.target.classList.contains('modal-close')  || e.target.classList.contains('modal-button-close')) {
         target.classList.remove('is-active');
         html.classList.remove('is-clipped');
       }

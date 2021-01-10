@@ -1,45 +1,78 @@
-<h1>Newsletter <%= @newsletter.name %></h1>
-<h2>Listing Issues</h2>
+<div class="columns is-desktop">
+  <div class="column">
+    <h1 class="title has-text-centered">Newsletter: <%= @newsletter.name %></h1>
+    <h2 class="subtitle has-text-centered">Upcoming Issues</h1>
 
-<%= form_for @changeset, Routes.sponsorship_path(@conn, :index), fn f -> %>
-  <%= if @changeset.action do %>
-    <div class="alert alert-danger">
-      <p>Oops, something went wrong! Please check the errors below.</p>
-    </div>
-  <% end %>
-
-  <%= unless @current_user do %>
-    <%= label f, :email %>
-    <%= email_input f, :email, required: true %>
-    <%= error_tag f, :email %>
-  <% end %>
-
-  <%= label f, :issue_id %>
-  <%= select f, :issue_id, Enum.map(@issues, fn issue -> {SponsorlyWeb.SponsorshipView.issue_name(issue), issue.id } end), prompt: "-- Select an issue to sponsor --", required: true %>
-  <%= error_tag f, :issue_id %>
-
-  <%= label f, :copy %>
-  <%= textarea f, :copy, required: true %>
-  <%= error_tag f, :copy %>
-
-  <div>
-    <%= submit "Save" %>
+    <%= if @issues == [] do %>
+      <p class="has-text-centered">
+        This newsletter has no upcoming issues.
+      </p>
+    <% else %>
+      <div class="is-flex is-justify-content-center">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Due</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <%= for issue <- @issues do %>
+            <tr>
+              <td class="is-vcentered"><%= issue.due_date %></td>
+              <td><a class="button is-primary modal-trigger" data-target="sponsor-form" data-issue="<%= issue.id %>">Sponsor</a></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+      </div>
+    <% end %>
   </div>
-<% end %>
+</div>
 
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Due at</th>
-    </tr>
-  </thead>
-  <tbody>
-<%= for issue <- @issues do %>
-    <tr>
-      <td><%= issue.name %></td>
-      <td><%= issue.due_at %></td>
-    </tr>
-<% end %>
-  </tbody>
-</table>
+<div id="sponsor-form" class="modal">
+  <div class="modal-background"></div>
+  <div class="modal-content">
+    <div class="card">
+      <div class="card-header">
+        <p class="card-header-title">Send Sponsorship</p>
+      </div>
+
+      <div class="card-content">
+        <%= form_for @changeset, Routes.sponsorship_path(@conn, :index), fn f -> %>
+          <%= if @changeset.action do %>
+            <div class="alert alert-danger">
+              <p>Oops, something went wrong! Please check the errors below.</p>
+            </div>
+          <% end %>
+
+          <%= unless @current_user do %>
+            <%= text_control f, :email, "Email", true %>
+          <% end %>
+
+          <div class="field">
+            <%= label f, :issue_id, "Issue to sponsor", class: "label" %>
+            <div class="select">
+              <%= select f, :issue_id, Enum.map(@issues, fn issue -> {issue.due_date, issue.id } end), prompt: "-- Select an issue to sponsor --", readonly: true, required: true %>
+            </div>
+            <%= error_tag f, :issue_id %>
+          </div>
+
+          <div class="field">
+            <%= label f, :copy, class: "label" %>
+            <div class="control">
+              <%= textarea f, :copy, class: "textarea", rows: 5, required: true %>
+            </div>
+            <%= error_tag f, :copy %>
+          </div>
+
+          <div class="buttons">
+            <%= submit "Save", class: "button is-primary" %>
+            <button type="button" class="button modal-button-close">Cancel</button>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+  <button class="modal-close is-large" aria-label="close"></button>
+</div>
