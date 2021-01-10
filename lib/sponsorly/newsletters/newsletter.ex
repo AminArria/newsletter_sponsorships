@@ -46,7 +46,7 @@ defmodule Sponsorly.Newsletters.Newsletter do
       changeset
     else
       false ->
-        add_error(changeset, :next_issue, "is not in one of the days you publish")
+        add_error(changeset, :next_issue, "is not in any of the days you publish")
 
       _lt_eq ->
         add_error(changeset, :next_issue, "must be after today")
@@ -105,6 +105,6 @@ defmodule Sponsorly.Newsletters.Newsletter do
   end
 
   def soft_delete_changeset(newsletter) do
-    change(newsletter, %{deleted: true})
+    change(newsletter, %{deleted: true, slug: nil})
   end
 end
