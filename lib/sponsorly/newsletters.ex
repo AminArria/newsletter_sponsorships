@@ -213,7 +213,7 @@ defmodule Sponsorly.Newsletters do
       from i in Issue,
       inner_join: sc in assoc(i, :confirmed_sponsorship),
       where: i.newsletter_id == ^newsletter_id and
-             i.due_date > ^now and
+             i.due_date >= ^now and
              not i.deleted,
       order_by: [asc: i.due_date, desc: i.inserted_at],
       preload: [confirmed_sponsorship: sc]
@@ -230,7 +230,7 @@ defmodule Sponsorly.Newsletters do
       left_join: s in assoc(i, :sponsorships),
       where: i.newsletter_id == ^newsletter_id and
              is_nil(sc) and
-             i.due_date > ^now and
+             i.due_date >= ^now and
              not i.deleted,
       order_by: [asc: i.due_date, desc: i.inserted_at],
       preload: [sponsorships: s]
@@ -245,7 +245,7 @@ defmodule Sponsorly.Newsletters do
       from i in Issue,
       left_join: sc in assoc(i, :confirmed_sponsorship),
       where: i.newsletter_id == ^newsletter_id and
-             i.due_date <= ^now and
+             i.due_date < ^now and
              not i.deleted,
       order_by: [asc: i.due_date, desc: i.inserted_at],
       preload: [confirmed_sponsorship: sc]
