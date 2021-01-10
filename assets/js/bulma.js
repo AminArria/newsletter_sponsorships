@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
 
+  // ELEMENT: Navbar burger menu on mobile
   // Get all "navbar-burger" elements
   const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
 
@@ -22,6 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // ELEMENT: close notifications pressing the X
   (document.querySelectorAll('.notification .delete') || []).forEach(($delete) => {
     var $notification = $delete.parentNode;
 
@@ -30,6 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // ELEMENT: cycle through tabs
   let tabs = (document.querySelectorAll('.tabs li') || [])
   let tabs_targets = (document.querySelectorAll('.tab-target') || [])
   tabs.forEach((tab) => {
@@ -48,5 +51,23 @@ document.addEventListener('DOMContentLoaded', () => {
         target.classList.remove('is-hidden');
       })
     })
+  });
+
+  // ELEMENT: open/close modals
+  (document.querySelectorAll('.modal-trigger') || []).forEach((modalTrigger) => {
+    let target = document.getElementById(modalTrigger.dataset.target);
+    let html = document.querySelector('html');
+
+    modalTrigger.addEventListener('click', e => {
+      target.classList.add('is-active');
+      html.classList.add('is-clipped');
+    })
+
+    target.addEventListener('click', e => {
+      if (e.target.classList.contains('modal-background') || e.target.classList.contains('modal-close')) {
+        target.classList.remove('is-active');
+        html.classList.remove('is-clipped');
+      }
+    });
   });
 });

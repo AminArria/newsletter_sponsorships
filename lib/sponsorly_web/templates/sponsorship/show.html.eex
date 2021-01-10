@@ -8,7 +8,7 @@
 
   <li>
     <strong>Issue:</strong>
-    <%= link issue_name(@sponsorship.issue), to: Routes.newsletter_issue_path(@conn, :show, @sponsorship.issue.newsletter, @sponsorship.issue) %>
+    <%= link @sponsorship.issue.due_date, to: Routes.newsletter_issue_path(@conn, :show, @sponsorship.issue.newsletter, @sponsorship.issue) %>
   </li>
 
   <li>

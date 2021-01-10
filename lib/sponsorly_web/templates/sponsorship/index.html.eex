@@ -1,95 +1,122 @@
-<h1>Listing Sponsorships</h1>
+<div class="columns is-desktop is-centered">
+  <div class="column is-4">
+    <h1 class="title has-text-centered">Sponsorships</h1>
 
+    <div class="tabs is-centered is-fullwidth is-toggle mt-5">
+      <ul>
+        <li class="<%= if_confirmed(@confirmed_sponsorships, "is-active") %>" data-target="confirmedSponsorship"><a>Confirmed</a></li>
+        <li class="<%= if_pending(@confirmed_sponsorships, "is-active") %>" data-target="pendingSponsorship"><a>Pending</a></li>
+        <li data-target="pastSponsorship"><a >Past</a></li>
+      </ul>
+    </div>
 
-<h2>Confirmed Sponsorships</h2>
-<table>
-  <thead>
-    <tr>
-      <th>Newsletter</th>
-      <th>Issue</th>
+    <div id="confirmedSponsorship" class="tab-target is-flex is-justify-content-center <%= if_pending(@confirmed_sponsorships, "is-hidden") %>">
+      <table class="table">
+          <thead>
+            <tr>
+              <th>Newsletter</th>
+              <th>Issue</th>
 
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    <%= for sponsorship <- @confirmed_sponsorships do %>
-      <tr>
-        <td>
-          <span><%= sponsorship.issue.newsletter.name %></span>
-        </td>
-        <td>
-          <span><%= issue_name(sponsorship.issue) %></span>
-        </td>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <%= for sponsorship <- @confirmed_sponsorships do %>
+              <tr>
+                <td class="is-vcentered">
+                  <span><%= sponsorship.issue.newsletter.name %></span>
+                </td>
+                <td class="is-vcentered">
+                  <span><%= sponsorship.issue.due_date %></span>
+                </td>
 
-        <td>
-          <span><%= link "Edit", to: Routes.sponsorship_path(@conn, :edit, sponsorship) %></span>
-        </td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+                <td>
+                  <%= link "Edit", to: Routes.sponsorship_path(@conn, :edit, sponsorship), class: "button is-info is-outlined" %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+      </table>
+    </div>
 
-<h2>Pending Sponsorships</h2>
-<table>
-  <thead>
-    <tr>
-      <th>Newsletter</th>
-      <th>Issue</th>
+    <div id="pendingSponsorship" class="tab-target is-flex is-justify-content-center <%= if_confirmed(@confirmed_sponsorships, "is-hidden") %>">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Newsletter</th>
+            <th>Issue</th>
 
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    <%= for sponsorship <- @pending_sponsorships do %>
-      <tr>
-        <td>
-          <span><%= sponsorship.issue.newsletter.name %></span>
-        </td>
-        <td>
-          <span><%= issue_name(sponsorship.issue) %></span>
-        </td>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <%= for sponsorship <- @pending_sponsorships do %>
+            <tr>
+              <td class="is-vcentered">
+                <span><%= sponsorship.issue.newsletter.name %></span>
+              </td>
+              <td class="is-vcentered">
+                <span><%= sponsorship.issue.due_date %></span>
+              </td>
 
-        <td>
-          <span><%= link "Edit", to: Routes.sponsorship_path(@conn, :edit, sponsorship) %></span>
-          <span><%= link "Delete", to: Routes.sponsorship_path(@conn, :delete, sponsorship), method: :delete, data: [confirm: "Are you sure?"] %></span>
-        </td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
-
-<h2>Past Sponsorships</h2>
-<table>
-  <thead>
-    <tr>
-      <th>Newsletter</th>
-      <th>Issue</th>
-      <th>Confirmed</th>
-
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    <%= for sponsorship <- @past_sponsorships do %>
-      <tr>
-        <td>
-          <span><%= sponsorship.issue.newsletter.name %></span>
-        </td>
-        <td>
-          <span><%= issue_name(sponsorship.issue) %></span>
-        </td>
-        <td>
-          <%= if sponsorship.confirmed_sponsorship do %>
-            Yes
-          <% else %>
-            No
+              <td>
+                <span><%= link "Edit", to: Routes.sponsorship_path(@conn, :edit, sponsorship), class: "button is-info is-outlined" %></span>
+              </td>
+            </tr>
           <% end %>
-        </td>
+        </tbody>
+      </table>
+    </div>
 
-        <td>
-          <span><%= link "Delete", to: Routes.sponsorship_path(@conn, :delete, sponsorship), method: :delete, data: [confirm: "Are you sure?"] %></span>
-        </td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+    <div id="pastSponsorship" class="tab-target is-hidden is-flex is-justify-content-center">
+      <div class="table-container">
+      <table class="table is-narrow">
+        <thead>
+          <tr>
+            <th>Newsletter</th>
+            <th>Issue</th>
+            <th>Confirmed</th>
+
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <%= for sponsorship <- @past_sponsorships do %>
+            <tr>
+              <td class="is-vcentered">
+                <span><%= sponsorship.issue.newsletter.name %></span>
+              </td>
+              <td class="is-vcentered">
+                <span><%= sponsorship.issue.due_date %></span>
+              </td>
+              <td class="is-vcentered">
+                <%= if sponsorship.confirmed_sponsorship do %>
+                  Yes
+                <% else %>
+                  No
+                <% end %>
+              </td>
+
+              <td>
+                <a class="button modal-trigger" data-target="copy-<%= sponsorship.id %>">See copy</a>
+
+                <div id="copy-<%= sponsorship.id %>" class="modal">
+                  <div class="modal-background"></div>
+                  <div class="modal-content">
+                    <article class="message is-info">
+                      <div class="message-body">
+                        <%= sponsorship.copy %>
+                      </div>
+                    </article>
+                  </div>
+                  <button class="modal-close is-large" aria-label="close"></button>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+    </div>
+  </div>
+</div>

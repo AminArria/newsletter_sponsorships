@@ -1,15 +1,11 @@
 defmodule SponsorlyWeb.SponsorshipView do
   use SponsorlyWeb, :view
 
-  def issue_name(%{name: nil} = issue) do
-    issue.due_at
-    |> DateTime.to_date()
-    |> to_string()
-  end
+  def if_confirmed([], _content), do: nil
+  def if_confirmed(_confirmations, content), do: content
 
-  def issue_name(issue) do
-    issue.name
-  end
+  def if_pending([], content), do: content
+  def if_pending(_confirmations, _content), do: nil
 
   def sponsorship_email(%Sponsorly.Sponsorships.Sponsorship{user: nil, email: email}) do
     email

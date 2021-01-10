@@ -1,5 +1,32 @@
-<h1>Edit Sponsorship</h1>
+<div class="columns is-desktop is-centered">
+  <div class="column is-4">
+    <h1 class="title has-text-centered">Edit Sponsorship</h1>
 
-<%= render "form.html", Map.put(assigns, :action, Routes.sponsorship_path(@conn, :update, @sponsorship)) %>
+    <%= form_for @changeset, Routes.sponsorship_path(@conn, :update, @sponsorship), fn f -> %>
+      <%= error_alert(@changeset) %>
 
-<span><%= link "Back", to: Routes.sponsorship_path(@conn, :index) %></span>
+      <%= unless assigns[:sponsorship] do %>
+        <%= label f, :issue_id %>
+        <%= select f, :issue_id, Enum.map(@issues, fn issue -> {issue.newsletter.name <> " " <> issue.due_date, issue.id } end) %>
+        <%= error_tag f, :issue_id %>
+      <% end %>
+
+      <div class="field">
+        <%= label f, :copy, class: "label" %>
+        <div class="control">
+          <%= textarea f, :copy, class: "textarea", required: true %>
+        </div>
+        <%= error_tag f, :copy %>
+      </div>
+
+      <div class="buttons">
+        <%= submit "Save", class: "button is-primary" %>
+        <%= link "Back", to: Routes.sponsorship_path(@conn, :index), class: "button" %>
+      </div>
+
+      <div class="buttons">
+        <%= link "Delete", to: Routes.sponsorship_path(@conn, :delete, @sponsorship), method: :delete, class: "button is-danger", data: [confirm: "Are you sure?"] %>
+      </div>
+    <% end %>
+  </div>
+</div>
