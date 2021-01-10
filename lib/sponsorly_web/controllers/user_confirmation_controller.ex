@@ -22,7 +22,7 @@ defmodule SponsorlyWeb.UserConfirmationController do
       "If your email is in our system and it has not been confirmed yet, " <>
         "you will receive an email with instructions shortly."
     )
-    |> redirect(to: "/")
+    |> redirect(to: Routes.user_session_path(conn, :new))
   end
 
   # Do not log in the user after confirmation to avoid a
@@ -41,7 +41,7 @@ defmodule SponsorlyWeb.UserConfirmationController do
         # a warning message.
         case conn.assigns do
           %{current_user: %{confirmed_at: confirmed_at}} when not is_nil(confirmed_at) ->
-            redirect(conn, to: "/")
+            redirect(conn, to: Routes.user_session_path(conn, :new))
 
           %{} ->
             conn

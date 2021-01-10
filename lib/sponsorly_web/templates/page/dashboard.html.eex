@@ -1,0 +1,38 @@
+<section class="hero is-primary dashboard-hero">
+  <div class="hero-body">
+    <div class="container">
+      <h1 class="title">
+        <%= gettext "Welcome to %{name}!", name: "Sponsorly" %>
+      </h1>
+      <h2 class="subtitle">
+        <%= hero_subtitle_text(@current_user) %>
+      </h2>
+    </div>
+  </div>
+</section>
+
+<div class="columns is-centered mt-5">
+  <%= if @current_user.is_creator do %>
+    <div class="column is-4">
+      <div class="card">
+        <div class="card-content">
+          <%= link to: Routes.newsletter_path(@conn, :index) do %>
+            <p class="title">Go to newsletters</p>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <%= if @current_user.is_sponsor do %>
+    <div class="column is-4">
+      <div class="card">
+        <div class="card-content">
+          <%= link to: Routes.sponsorship_path(@conn, :index) do %>
+            <p class="title">Go to sponsorships</p>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>

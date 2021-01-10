@@ -11,15 +11,20 @@
 
   <div id="userMenu" class="navbar-menu">
     <div class="navbar-start">
-      <%= link "Home", to: Routes.page_path(@conn, :index), class: "navbar-item" %>
 
       <%= if @current_user do %>
+        <%= link "Dashboard", to: Routes.page_path(@conn, :dashboard), class: "navbar-item" %>
+
         <%= if @current_user.is_creator do %>
           <%= link "Newsletters", to: Routes.newsletter_path(@conn, :index), class: "navbar-item" %>
         <% end %>
+
         <%= if @current_user.is_sponsor do %>
           <%= link "Sponsorships", to: Routes.sponsorship_path(@conn, :index), class: "navbar-item" %>
         <% end %>
+
+      <% else %>
+        <%= link "Home", to: Routes.page_path(@conn, :index), class: "navbar-item" %>
       <% end %>
     </div>
 

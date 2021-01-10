@@ -30,6 +30,8 @@ defmodule SponsorlyWeb.Router do
   scope "/", SponsorlyWeb do
     pipe_through [:browser, :user]
 
+    get "/dashboard", PageController, :dashboard
+
     resources "/newsletters", NewsletterController do
       resources "/issues", IssueController
     end
@@ -70,7 +72,7 @@ defmodule SponsorlyWeb.Router do
 
     scope "/" do
       pipe_through :browser
-      live_dashboard "/dashboard", metrics: SponsorlyWeb.Telemetry
+      live_dashboard "/metris_dashboard", metrics: SponsorlyWeb.Telemetry
     end
   end
 

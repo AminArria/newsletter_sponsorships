@@ -13,7 +13,7 @@ defmodule SponsorlyWeb.UserOnboardingController do
       {:ok, _user} ->
         conn
         |> put_flash(:info, "Welcome")
-        |> redirect(to: Routes.page_path(conn, :index))
+        |> redirect(to: Routes.page_path(conn, :dashboard))
 
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "edit.html", changeset: changeset)
