@@ -4,11 +4,17 @@ defmodule Sponsorly.Newsletters.Newsletter do
 
   schema "newsletters" do
     field :deleted, :boolean, default: false
-    field :interval_days, :integer
     field :name, :string
     field :slug, :string
     field :sponsor_before_days, :integer
     field :sponsor_in_days, :integer
+    field :in_monday, :boolean, default: false
+    field :in_tuesday, :boolean, default: false
+    field :in_wednesday, :boolean, default: false
+    field :in_thursday, :boolean, default: false
+    field :in_friday, :boolean, default: false
+    field :in_saturday, :boolean, default: false
+    field :in_sunday, :boolean, default: false
 
     field :next_issue, :date, virtual: true
 
@@ -18,11 +24,14 @@ defmodule Sponsorly.Newsletters.Newsletter do
     timestamps()
   end
 
+  @in_days [:in_monday, :in_tuesday, :in_wednesday, :in_thursday, :in_friday, :in_saturday, :in_sunday]
+  def in_days, do: @in_days
+
   @doc false
   def create_changeset(newsletter, attrs) do
     newsletter
-    |> cast(attrs, [:name, :interval_days, :next_issue, :slug, :sponsor_before_days, :sponsor_in_days, :user_id])
-    |> validate_required([:name, :interval_days, :next_issue, :slug, :sponsor_before_days, :sponsor_in_days, :user_id])
+    |> cast(attrs, [:name, :next_issue, :slug, :sponsor_before_days, :sponsor_in_days, :user_id] ++ @in_days)
+    |> validate_required([:name, :next_issue, :slug, :sponsor_before_days, :sponsor_in_days, :user_id] ++ @in_days)
     |> common_validations()
     |> validate_next_issue()
     |> prepare_changes(&generate_issues/1)
@@ -30,40 +39,58 @@ defmodule Sponsorly.Newsletters.Newsletter do
 
   defp validate_next_issue(changeset) do
     with next_issue when not is_nil(next_issue) <- get_change(changeset, :next_issue),
-         :gt <- Date.compare(next_issue, Date.utc_today()) do
+         :gt <- Date.compare(next_issue, Date.utc_today()),
+         weekday <- Date.day_of_week(next_issue),
+         in_day_field <- Enum.at(@in_days, weekday - 1),
+         true <- get_change(changeset, in_day_field, false) do
       changeset
     else
-      _ ->
+      false ->
+        add_error(changeset, :next_issue, "is not in one of the days you publish")
+
+      cmp when cmp in [:lt, :eq] ->
         add_error(changeset, :next_issue, "must be after today")
     end
   end
 
   defp generate_issues(changeset) do
     next_issue = get_change(changeset, :next_issue)
-    interval_days = get_change(changeset, :interval_days)
     sponsor_in_days = get_change(changeset, :sponsor_in_days)
     max_sponsor_date = Date.add(Date.utc_today(), sponsor_in_days)
 
-    issues_attrs = generate_issues(next_issue, max_sponsor_date, interval_days, [])
+    days_check =
+      Enum.with_index(@in_days)
+      |> Enum.reduce(%{}, fn {day, index}, acc ->
+        in_day = get_change(changeset, day, false)
+        # Because Enum.with_index/2 starts at 0, but Date.day_of_week/1 starts at 1
+        day_index = index + 1
+        Map.put(acc, day_index, in_day)
+      end)
+
+    issues_attrs = generate_issues(next_issue, max_sponsor_date, days_check, [])
     put_change(changeset, :issues, issues_attrs)
   end
 
-  def generate_issues(current_issue_date, max_sponsor_date, interval_days, issues_attrs) do
-    case Date.compare(max_sponsor_date, current_issue_date) do
-      :gt ->
-        issue_attrs = %{due_date: current_issue_date}
-        next_issue = Date.add(current_issue_date, interval_days)
-        generate_issues(next_issue, max_sponsor_date, interval_days, issues_attrs ++ [issue_attrs])
+  def generate_issues(current_date, max_sponsor_date, _days_check, issues_attrs) when current_date < max_sponsor_date do
+    issues_attrs
+  end
 
-      _ ->
-        issues_attrs
+  def generate_issues(current_date, max_sponsor_date, days_check, issues_attrs) do
+    weekday = Date.day_of_week(current_date)
+    next_date = Date.add(current_date, 1)
+
+    if days_check[weekday] do
+      issue_attrs = %{due_date: current_date}
+      generate_issues(next_date, max_sponsor_date, days_check, issues_attrs ++ [issue_attrs])
+    else
+      generate_issues(next_date, max_sponsor_date, days_check, issues_attrs)
     end
   end
 
   def update_changeset(newsletter, attrs) do
     newsletter
-    |> cast(attrs, [:name, :interval_days, :slug, :sponsor_before_days, :sponsor_in_days])
-    |> validate_required([:name, :interval_days, :slug, :sponsor_before_days, :sponsor_in_days])
+    |> cast(attrs, [:name, :slug, :sponsor_before_days, :sponsor_in_days] ++ @in_days)
+    |> validate_required([:name, :slug, :sponsor_before_days, :sponsor_in_days] ++ @in_days)
     |> common_validations()
   end
 
@@ -71,8 +98,6 @@ defmodule Sponsorly.Newsletters.Newsletter do
     changeset
     |> validate_format(:slug, ~r/^[a-z0-9-]+$/, message: "must only contain lowercase characters (a-z), numbers (0-9), and \"-\"")
     |> unique_constraint([:slug, :user_id])
-    # TODO: allow publishing more than once a day
-    |> validate_number(:interval_days, greater_than_or_equal_to: 1, less_than_or_equal_to: 7)
     # Can't sponsor after publishing
     |> validate_number(:sponsor_before_days, greater_than_or_equal_to: 0)
     # TODO: Indefinite amount of issues to show ahead (for now 1 year ahead max)

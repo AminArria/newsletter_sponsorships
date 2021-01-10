@@ -20,9 +20,22 @@
       <%= error_tag f, :slug %>
   </div>
 
-  <%= text_control f, :interval_days, "Publishing interval (days)", true %>
+  <div class="field">
+    <%= label f, :days, "In which days do you publish?", class: "label" %>
+
+    <div class="control">
+      <%= in_day_field f, :in_monday, "Monday" %>
+      <%= in_day_field f, :in_tuesday, "Tuesday" %>
+      <%= in_day_field f, :in_wednesday, "Wednesday" %>
+      <%= in_day_field f, :in_thursday, "Thursday" %>
+      <%= in_day_field f, :in_friday, "Friday" %>
+      <%= in_day_field f, :in_saturday, "Saturday" %>
+      <%= in_day_field f, :in_sunday, "Sunday" %>
+    </div>
+  </div>
+
   <%= text_control f, :sponsor_before_days, "How many days before publishing can an issue be sponsored?", true %>
-  <%= text_control f, :sponsor_in_days, "Up to how many days in advanced can issues to be sponsored?", true %>
+  <%= text_control f, :sponsor_in_days, "Up to how many days in advanced can issues be sponsored?", true %>
 
   <%= unless assigns[:newsletter] do %>
     <div class="field">

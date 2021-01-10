@@ -5,6 +5,7 @@ defmodule Sponsorly.IssuesCreator do
 
   alias Sponsorly.Repo
   alias Sponsorly.Newsletters.Issue
+  alias Sponsorly.Newsletters.Newsletter
 
 
   def start_link(args) do
@@ -30,34 +31,41 @@ defmodule Sponsorly.IssuesCreator do
 
   @impl true
   def handle_info(:create_issues, state) do
-    current_date = Date.utc_today()
+    Process.send_after(self(), :create_issues, 12 * 60 * 60 * 1000)
 
-    q =
+    generate_issues()
+
+    {:noreply, state}
+  end
+
+  def generate_issues do
+    today = Date.utc_today()
+    weekday = Date.day_of_week(today)
+    in_day_field = Enum.at(Newsletter.in_days(), weekday - 1)
+
+    newsletters_today_q =
+      from n in Newsletter,
+        select: n.id,
+        where: field(n, ^in_day_field) and
+               not n.deleted
+
+    already_issued_q =
       from i in Issue,
-      where: not i.deleted,
-      distinct: i.newsletter_id,
-      order_by: [desc: i.due_date]
+        select: i.newsletter_id,
+        where: i.due_date == ^today and
+               not i.deleted
 
-    last_issues =
-      Repo.all(q)
-      |> Repo.preload([:newsletter])
+    already_issued = Repo.all(already_issued_q)
+    pending_for_issue =
+      Repo.all(newsletters_today_q)
+      |> Enum.reject(fn newsletter_id -> newsletter_id in already_issued end)
 
     new_issues =
-      Enum.reduce(last_issues, [], fn issue, new_issues ->
-        next_issue_date = Date.add(issue.due_date, issue.newsletter.interval_days)
-        max_sponsor_date = Date.add(current_date, issue.newsletter.sponsor_in_days)
-        case Date.compare(max_sponsor_date, next_issue_date) do
-          :gt ->
-            naive_current_at = NaiveDateTime.new(current_date, Time.utc_now())
-            attrs = %{due_date: next_issue_date, newsletter_id: issue.newsletter_id, inserted_at: naive_current_at, updated_at: naive_current_at}
-            [attrs | new_issues]
-
-          _ ->
-            new_issues
-        end
+      Enum.map(pending_for_issue, fn newsletter_id ->
+        naive_current_at = NaiveDateTime.new!(today, Time.utc_now()) |> NaiveDateTime.truncate(:second)
+        %{due_date: today, newsletter_id: newsletter_id, inserted_at: naive_current_at, updated_at: naive_current_at}
       end)
 
     Repo.insert_all(Issue, new_issues)
-    {:noreply, state}
   end
 end

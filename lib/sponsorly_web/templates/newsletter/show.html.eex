@@ -15,11 +15,6 @@
       </li>
 
       <li>
-        <strong>Publishing interval:</strong>
-        <%= @newsletter.interval_days %>&nbsp;days
-      </li>
-
-      <li>
         <strong>Can sponsor before publishing:</strong>
         <%= @newsletter.sponsor_before_days %>&nbsp;days
       </li>
@@ -27,6 +22,11 @@
       <li>
         <strong>Can sponsor in advanced:</strong>
         <%= @newsletter.sponsor_in_days %>&nbsp;days
+      </li>
+
+      <li>
+        <strong>Publishing days:</strong>
+        <%= days_ul(@newsletter) %>
       </li>
 
       <li>
