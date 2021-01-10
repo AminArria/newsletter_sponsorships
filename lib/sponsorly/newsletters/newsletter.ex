@@ -71,7 +71,7 @@ defmodule Sponsorly.Newsletters.Newsletter do
     put_change(changeset, :issues, issues_attrs)
   end
 
-  def generate_issues(current_date, max_sponsor_date, _days_check, issues_attrs) when current_date < max_sponsor_date do
+  def generate_issues(current_date, max_sponsor_date, _days_check, issues_attrs) when current_date > max_sponsor_date do
     issues_attrs
   end
 
