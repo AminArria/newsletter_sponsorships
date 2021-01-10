@@ -8,7 +8,7 @@
 
   <li>
     <strong>Issue:</strong>
-    <%= SponsorlyWeb.SponsorshipView.issue_name(@sponsorship.issue) %>
+    <%= @sponsorship.issue.due_date %>
   </li>
 
   <li>

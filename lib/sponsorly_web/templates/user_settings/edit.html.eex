@@ -3,9 +3,60 @@
 
     <h1 class="title has-text-centered">Settings</h1>
 
-    <%= if @email_changeset.action || @password_changeset.action do%>
-      <%= error_alert() %>
-    <% end %>
+    <div class="tabs is-centered is-fullwidth is-toggle mt-5">
+      <ul>
+        <li class="<%= active_tab(assigns[:active_tab], :user) %>" data-target="userSettings"><a>Account</a></li>
+        <li class="<%= active_tab(assigns[:active_tab], :login) %>" data-target="loginSettings"><a>Login</a></li>
+      </ul>
+    </div>
+
+    <div id="userSettings" class="tab-target <%= hide_tab_target(assigns[:active_tab], :user) %>">
+      <%= form_for @user_changeset, Routes.user_settings_path(@conn, :update), fn f -> %>
+        <%= error_alert(@user_changeset) %>
+        <%= hidden_input f, :action, name: "action", value: "update_user" %>
+
+        <p class="mb-4">Changing you Sponsorly URL will mean that all the links you have shared will stop working and will need to be updated.</p>
+
+        <div class="field">
+          <div class="field has-addons">
+            <div class="control">
+              <a class="button is-static"><%= @conn.host %>/sponsor/</a>
+            </div>
+
+            <div class="control is-expanded">
+              <%= text_input f, :slug, class: "input", placeholder: "my-name" %>
+            </div>
+          </div>
+          <%= error_tag f, :slug %>
+        </div>
+
+        <div class="field">
+          <%= label f, :type, "What are you using Sponsorly for?", class: "label" %>
+
+          <div class="control">
+            <label class="checkbox">
+              <%= checkbox f, :is_creator %>
+              Managing sponsors
+            </label>
+          </div>
+
+          <div class="control">
+            <label class="checkbox">
+              <%= checkbox f, :is_sponsor %>
+              Sponsoring a newsletter
+            </label>
+          </div>
+        </div>
+
+        <div class="field">
+          <%= submit "Save changes", class: "button is-primary" %>
+        </div>
+      <% end %>
+    </div>
+
+    <div id="loginSettings" class="tab-target <%= hide_tab_target(assigns[:active_tab], :login) %>">
+      <%= error_alert(@email_changeset) %>
+      <%= error_alert(@password_changeset) %>
 
     <div class="columns is-desktop is-centered">
       <div class="column">
@@ -52,6 +103,7 @@
           </div>
         <% end %>
       </div>
+    </div>
     </div>
   </div>
 </div>

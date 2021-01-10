@@ -8,8 +8,11 @@ defmodule Sponsorly.Accounts.User do
     field :email, :string
     field :hashed_password, :string
     field :slug, :string
+    field :is_creator, :boolean
+    field :is_sponsor, :boolean
 
     field :password, :string, virtual: true
+    field :type, Ecto.Enum, values: [:creator, :sponsor, :both], virtual: true
 
     timestamps()
   end
@@ -33,9 +36,37 @@ defmodule Sponsorly.Accounts.User do
   """
   def registration_changeset(user, attrs, opts \\ []) do
     user
-    |> cast(attrs, [:email, :password])
+    |> cast(attrs, [:email, :password, :type])
+    |> validate_type()
     |> validate_email()
     |> validate_password(opts)
+  end
+
+  defp validate_type(changeset) do
+    changeset
+    |> set_is_creator()
+    |> set_is_sponsor()
+    |> validate_required([:type, :is_creator, :is_sponsor])
+  end
+
+  defp set_is_creator(changeset) do
+    case get_field(changeset, :type) do
+      type when type in [:creator, :both] ->
+        put_change(changeset, :is_creator, true)
+
+      _ ->
+        put_change(changeset, :is_creator, false)
+    end
+  end
+
+  defp set_is_sponsor(changeset) do
+    case get_field(changeset, :type) do
+      type when type in [:sponsor, :both] ->
+        put_change(changeset, :is_sponsor, true)
+
+      _ ->
+        put_change(changeset, :is_sponsor, false)
+    end
   end
 
   defp validate_email(changeset) do
@@ -119,6 +150,21 @@ defmodule Sponsorly.Accounts.User do
     user
     |> cast(attrs, [:slug])
     |> validate_required([:slug])
+    |> validate_slug()
+  end
+
+  @doc """
+  A changeset for user fields except email and password
+  """
+  def user_changeset(user, attrs) do
+    user
+    |> cast(attrs, [:is_creator, :is_sponsor, :slug])
+    |> validate_required([:is_creator, :is_sponsor])
+    |> validate_slug()
+  end
+
+  defp validate_slug(changeset) do
+    changeset
     |> validate_format(:slug, ~r/^[a-z0-9-]+$/, message: "must only contain lowercase characters (a-z), numbers (0-9), and \"-\"")
     |> unique_constraint(:slug)
   end

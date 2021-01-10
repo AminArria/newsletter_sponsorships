@@ -4,7 +4,7 @@ defmodule SponsorlyWeb.UserSettingsController do
   alias Sponsorly.Accounts
   alias SponsorlyWeb.UserAuth
 
-  plug :assign_email_and_password_changesets
+  plug :assign_changesets
 
   def edit(conn, _params) do
     render(conn, "edit.html")
@@ -30,7 +30,7 @@ defmodule SponsorlyWeb.UserSettingsController do
         |> redirect(to: Routes.user_settings_path(conn, :edit))
 
       {:error, changeset} ->
-        render(conn, "edit.html", email_changeset: changeset)
+        render(conn, "edit.html", email_changeset: changeset, active_tab: :login)
     end
   end
 
@@ -46,7 +46,22 @@ defmodule SponsorlyWeb.UserSettingsController do
         |> UserAuth.log_in_user(user)
 
       {:error, changeset} ->
-        render(conn, "edit.html", password_changeset: changeset)
+        render(conn, "edit.html", password_changeset: changeset, active_tab: :login)
+    end
+  end
+
+  def update(conn, %{"action" => "update_user"} = params) do
+    %{"user" => user_params} = params
+    user = conn.assigns.current_user
+
+    case Accounts.update_user(user, user_params) do
+      {:ok, _user} ->
+        conn
+        |> put_flash(:info, "Account updated successfully.")
+        |> redirect(to: Routes.user_settings_path(conn, :edit))
+
+      {:error, changeset} ->
+        render(conn, "edit.html", user_changeset: changeset, active_tab: :user)
     end
   end
 
@@ -64,10 +79,11 @@ defmodule SponsorlyWeb.UserSettingsController do
     end
   end
 
-  defp assign_email_and_password_changesets(conn, _opts) do
+  defp assign_changesets(conn, _opts) do
     user = conn.assigns.current_user
 
     conn
+    |> assign(:user_changeset, Accounts.change_user(user))
     |> assign(:email_changeset, Accounts.change_user_email(user))
     |> assign(:password_changeset, Accounts.change_user_password(user))
   end

@@ -19,8 +19,7 @@ defmodule SponsorlyWeb.FormHelpers do
     nil
   end
 
-  def error_alert(%Ecto.Changeset{} = c) do
-    IO.inspect(c)
+  def error_alert(%Ecto.Changeset{}) do
     error_alert()
   end
 

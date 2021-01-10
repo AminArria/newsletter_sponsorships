@@ -370,4 +370,26 @@ defmodule Sponsorly.Accounts do
   def change_user_onboard(user) do
     User.onboard_changeset(user, %{})
   end
+
+  @doc """
+  Updates the user.
+
+  ## Examples
+
+      iex> update_user_password(user, %{field: ...})
+      {:ok, %User{}}
+
+      iex> update_user_password(user, %{field: ...})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_user(user, attrs) do
+    user
+    |> User.user_changeset(attrs)
+    |> Repo.update()
+  end
+
+  def change_user(%User{} = user, attrs \\ %{}) do
+    User.user_changeset(user, attrs)
+  end
 end

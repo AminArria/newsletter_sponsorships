@@ -11,6 +11,32 @@
       <%= text_control f, :password, "Password", true %>
 
       <div class="field">
+        <%= label f, :type, "What are you going to be using Sponsorly for?", class: "label" %>
+
+        <div class="control">
+          <label class="radio">
+            <%= radio_button f, :type, :creator, required: true %>
+            Manage my newsletter's sponsors
+          </label>
+        </div>
+
+        <div class="control">
+          <label class="radio">
+            <%= radio_button f, :type, :sponsor, required: true %>
+            Sponsor a newsletter
+          </label>
+        </div>
+
+        <div class="control">
+          <label class="radio">
+            <%= radio_button f, :type, :both, required: true %>
+            Both
+          </label>
+        </div>
+        <%= error_tag f, :type %>
+      </div>
+
+      <div class="field">
         <%= submit "Register", class: "button is-primary" %>
       </div>
 

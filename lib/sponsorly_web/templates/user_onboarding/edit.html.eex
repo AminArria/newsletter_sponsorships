@@ -1,19 +1,30 @@
-<h1>Welcome!</h1>
+<div class="columns is-desktop is-centered">
+  <div class="column is-4">
+    <h1 class="title has-text-centered">Welcome to Sponsorly!</h1>
+    <h2 class="subtitle has-text-centered">Create your URL</h2>
 
-<p>Before moving on to the rest of the site we need one last piece of information from you. Please create the piece of URL (slug) you want for your public links.</p>
+    <p class="mb-4">This will be the public URL you can give to people to see your newsletters</p>
 
-<%= form_for @changeset, Routes.user_onboarding_path(@conn, :update), fn f -> %>
-  <%= if @changeset.action do %>
-    <div class="alert alert-danger">
-      <p>Oops, something went wrong! Please check the errors below.</p>
-    </div>
-  <% end %>
 
-  <%= label f, :slug %>
-  <%= text_input f, :slug %>
-  <%= error_tag f, :slug %>
+    <%= form_for @changeset, Routes.user_onboarding_path(@conn, :update), fn f -> %>
+      <%= error_alert(@changeset) %>
 
-  <div>
-    <%= submit "Save" %>
+      <div class="field">
+        <div class="field has-addons">
+          <div class="control">
+            <a class="button is-static"><%= @conn.host %>/sponsor/</a>
+          </div>
+
+          <div class="control is-expanded">
+            <%= text_input f, :slug, class: "input", placeholder: "my-name", required: true %>
+          </div>
+        </div>
+        <%= error_tag f, :slug %>
+      </div>
+
+      <div class="buttons">
+        <%= submit "Save", class: "button is-primary" %>
+      </div>
+    <% end %>
   </div>
-<% end %>
+</div>

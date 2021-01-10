@@ -162,12 +162,14 @@ defmodule SponsorlyWeb.UserAuth do
   Redirects the user if it needs to be onboarded.
   """
   def check_if_onboarded(conn, _opts) do
-    if conn.assigns.current_user.slug do
-      conn
-    else
+    user = conn.assigns.current_user
+
+    if user.is_creator and is_nil(user.slug) do
       conn
       |> redirect(to: Routes.user_onboarding_path(conn, :edit))
       |> halt()
+    else
+      conn
     end
   end
 end
