@@ -1,40 +1,17 @@
-<h2>Sponsorship Submitted</h2>
+<div class="columns is-desktop is-centered">
+  <div class="column is-4">
+    <h1 class="title has-text-centered">Sponsorship Submitted</h1>
+    <h2 class="subtitle has-text-centered">Register to keep track of your sponsorships</h1>
 
-<ul>
-  <li>
-    <strong>Newsletter:</strong>
-    <%= @sponsorship.issue.newsletter.name %>
-  </li>
+    <%= form_for @changeset, Routes.user_registration_path(@conn, :create), fn f -> %>
+      <%= error_alert(@changeset) %>
 
-  <li>
-    <strong>Issue:</strong>
-    <%= @sponsorship.issue.due_date %>
-  </li>
+      <%= text_control f, :email, "Email", true %>
+      <%= text_control f, :password, "Password (at least 12 chars)", true %>
 
-  <li>
-    <strong>Copy:</strong>
-    <%= @sponsorship.copy %>
-  </li>
-</ul>
-
-<h2>Register</h2>
-
-<%= form_for @changeset, Routes.user_registration_path(@conn, :create), fn f -> %>
-  <%= if @changeset.action do %>
-    <div class="alert alert-danger">
-      <p>Oops, something went wrong! Please check the errors below.</p>
-    </div>
-  <% end %>
-
-  <%= label f, :email %>
-  <%= email_input f, :email, readonly: true %>
-  <%= error_tag f, :email %>
-
-  <%= label f, :password %>
-  <%= password_input f, :password, required: true %>
-  <%= error_tag f, :password %>
-
-  <div>
-    <%= submit "Register" %>
+      <div class="buttons">
+        <%= submit "Register", class: "button is-primary" %>
+      </div>
+    <% end %>
   </div>
-<% end %>
+</div>
