@@ -1,6 +1,7 @@
 defmodule Sponsorly.Newsletters.Newsletter do
   use Ecto.Schema
   import Ecto.Changeset
+  require IEx
 
   schema "newsletters" do
     field :deleted, :boolean, default: false
@@ -71,19 +72,20 @@ defmodule Sponsorly.Newsletters.Newsletter do
     put_change(changeset, :issues, issues_attrs)
   end
 
-  def generate_issues(current_date, max_sponsor_date, _days_check, issues_attrs) when current_date > max_sponsor_date do
-    issues_attrs
-  end
-
   def generate_issues(current_date, max_sponsor_date, days_check, issues_attrs) do
-    weekday = Date.day_of_week(current_date)
-    next_date = Date.add(current_date, 1)
+    if Date.compare(current_date, max_sponsor_date) == :lt do
+      weekday = Date.day_of_week(current_date)
+      next_date = Date.add(current_date, 1)
 
-    if days_check[weekday] do
-      issue_attrs = %{due_date: current_date}
-      generate_issues(next_date, max_sponsor_date, days_check, issues_attrs ++ [issue_attrs])
+      if days_check[weekday] do
+        issue_attrs = %{due_date: current_date}
+        generate_issues(next_date, max_sponsor_date, days_check, issues_attrs ++ [issue_attrs])
+      else
+        generate_issues(next_date, max_sponsor_date, days_check, issues_attrs)
+      end
+
     else
-      generate_issues(next_date, max_sponsor_date, days_check, issues_attrs)
+      issues_attrs
     end
   end
 
