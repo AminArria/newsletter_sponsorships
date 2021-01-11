@@ -346,6 +346,14 @@ defmodule Sponsorly.Sponsorships do
   end
 
   @doc """
+  Delivers the notification about a created sponsorship
+  """
+  def deliver_created_sponsorship(email, sponsorship) do
+    sponsorship = Repo.preload(sponsorship, issue: :newsletter)
+    SponsorshipNotifier.deliver_sponsorship_submitted(email, sponsorship)
+  end
+
+  @doc """
   Delivers the notification about a confirmed sponsorship
   """
   def deliver_confirmed_sponsorship(sponsorship) do

@@ -14,6 +14,8 @@ defmodule SponsorlyWeb.SponsorshipController do
   def create(%{assigns: %{current_user: nil}} = conn, %{"sponsorship" => sponsorship_params}) do
     case Sponsorships.create_sponsorship(sponsorship_params) do
       {:ok, sponsorship} ->
+        Sponsorships.deliver_created_sponsorship(sponsorship.email, sponsorship)
+
         conn
         |> put_flash(:info, "Sponsorship created successfully.")
         |> redirect(to: Routes.user_registration_path(conn, :from_sponsorship, sponsorship, email: sponsorship.email))
@@ -28,7 +30,9 @@ defmodule SponsorlyWeb.SponsorshipController do
     sponsorship_params = Map.put(sponsorship_params, "user_id", current_user.id)
 
     case Sponsorships.create_sponsorship(sponsorship_params) do
-      {:ok, _sponsorship} ->
+      {:ok, sponsorship} ->
+        Sponsorships.deliver_created_sponsorship(current_user.email, sponsorship)
+
         conn
         |> put_flash(:info, "Sponsorship created successfully.")
         |> redirect(to: Routes.sponsorship_path(conn, :index))
