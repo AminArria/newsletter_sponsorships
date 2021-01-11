@@ -28,4 +28,15 @@ document.addEventListener('DOMContentLoaded', () => {
       select.value = issueId;
     })
   });
+
+  // Move something to user's clipboard
+  (document.querySelectorAll('.copy') || []).forEach(copyTrigger => {
+    copyTrigger.addEventListener('click', () => {
+      copyTrigger.innerText = "Copied";
+      navigator.clipboard.writeText(copyTrigger.dataset.content);
+      copyTrigger.addEventListener('mouseout', () => {
+        copyTrigger.innerText = "Copy URL";
+      }, {once: true});
+    })
+  });
 });

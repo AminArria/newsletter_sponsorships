@@ -26,13 +26,24 @@
                 </div>
               <% end %>
 
+              <div class="card-content">
+                <div class="container">
+                  <p class="has-text-weight-bold">URL for sponsoring:</p>
+                  <%= link "/#{newsletter.slug}", to: Routes.issue_path(@conn, :slug_index, @current_user.slug, newsletter.slug) %>
+                </div>
+              </div>
+
               <div class="card-footer">
                 <p class="card-footer-item">
-                  <%= link "/#{newsletter.slug}", to: Routes.issue_path(@conn, :slug_index, @current_user.slug, newsletter.slug) %>
+                  <%= link "Details", to: Routes.newsletter_path(@conn, :show, newsletter) %>
                 </p>
 
                 <p class="card-footer-item">
                   <%= link "Issues", to: Routes.newsletter_issue_path(@conn, :index, newsletter) %>
+                </p>
+
+                <p class="card-footer-item">
+                  <a class="copy" data-content="<%= Routes.issue_url(@conn, :slug_index, @current_user.slug, newsletter.slug) %>">Copy URL</a>
                 </p>
               </div>
             </div>
