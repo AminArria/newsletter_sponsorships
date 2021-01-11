@@ -1,20 +1,34 @@
-<section class="phx-hero">
-  <h1><%= gettext "Welcome to %{name}!", name: "Sponsorly" %></h1>
-  <p>Manage sponsors for your newsletter</p>
+<section class="hero is-primary dashboard-hero">
+  <div class="hero-body">
+    <div class="container">
+      <h1 class="title">
+        <%= gettext "Welcome to %{name}!", name: "Sponsorly" %>
+      </h1>
+      <h2 class="subtitle">
+        To begin register or log in to your account
+      </h2>
+    </div>
+  </div>
 </section>
 
-<section class="row">
-  <%= if @current_user do %>
-    <article class="column">
-      <h2>Navigation</h2>
-      <ul>
-        <li>
-          <%= link "Newsletters", to: Routes.newsletter_path(@conn, :index) %>
-        </li>
-        <li>
-          <%= link "Sponsorhips", to: Routes.sponsorship_path(@conn, :index) %>
-        </li>
-      </ul>
-    </article>
-  <% end %>
-</section>
+<div class="columns is-centered mt-5">
+  <div class="column is-4">
+    <div class="card">
+      <div class="card-content">
+        <%= link to: Routes.user_registration_path(@conn, :new) do %>
+          <p class="title">Register</p>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <div class="column is-4">
+    <div class="card">
+      <div class="card-content">
+        <%= link to: Routes.user_session_path(@conn, :new) do %>
+          <p class="title">Log In</p>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
